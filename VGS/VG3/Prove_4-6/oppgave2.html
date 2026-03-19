@@ -1,0 +1,63 @@
+<DOCTYPE HTML>
+    <html lang="no">
+	    <head>
+		    <title></title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="" />
+			
+			<script>
+			window.onload = oppstart;
+			
+		    var arrRovdyr = ["Gaupe","Jerv","Bjørn","Ulv","Kongeørn",];
+			var arrAntall = [0,0,0,0,0];
+			<!-- lager to arrayer. En som holder på et rovdyr og en som holder på antall -->
+			
+			function oppstart() {
+				document.getElementById("btnReg").onclick = registrer;
+				document.getElementById("btnVis").onclick = visRovdyr;
+			}
+			
+			function registrer() {
+			var info = "";
+			var rovdyr = document.getElementById("lstListe").value;
+			var antall = parseInt(document.getElementById("txtTall").value);
+			
+			for(var i = 0; i < arrRovdyr.length; i++) {
+			    if (rovdyr === i) {
+					arrAntall[i] += antall;
+				}	
+			}
+			<!-- lager en forløkke som finner den posisjonen i arrayen som er lik tekstinputen. Så legger den til 'en i posijon 1 av sagte 0 posisjon.-->
+			document.getElementById("txtVis").innerHTML = "Gaupe: " + arrAntall[0] + "<br />" + "Jerv: " + arrAntall[1] + "<br />" + "Bjørn: " + arrAntall[2] + "<br />" + "Ulv: " + arrAntall[3] + "<br />" + "Kongeørn: " + arrAntall[4];
+			<!-- innerHTML som viser antall rein hvert rovdyr har tatt ved å hente ut arrRein posisjon 1 av hvert dyr -->
+			}
+			
+			function visRovdyr() {
+			document.getElementById("txtVis").innerHTML = "Gaupe: " + arrAntall[0] + "<br />" + "Jerv: " + arrAntall[1] + "<br />" + "Bjørn: " + arrAntall[2] + "<br />" + "Ulv: " + arrAntall[3] + "<br />" + "Kongeørn: " + arrAntall[4];
+			<!-- det samme som innerhtml i function registrer, men dersom en ikke skal registrer å bare se -->
+			}
+			</script>
+			
+			<style>
+			    
+			</style>
+		</head>
+		
+		<body>
+		<div id="velg">
+			<h3>Velg rovdyr</h3>
+				<select id="lstListe"> 
+					<option>Velg rovdyr...</option>
+					<option value="0">Gaupe</option>
+					<option value="1">Jerv</option>
+					<option value="2">Bjørn</option>
+					<option value="3">Ulv</option>
+					<option value="4">Kongeørn</option>
+		        </select>
+		</div>
+		<p>Antall reindyr: <input type="number" id="txtTall"></p>
+		<p><button id="btnReg">Registrer hendelse</button></p>
+		<p><button id="btnVis">Vis rovdyrsdata</button></p>
+		<p id="txtVis"></p>	    
+    	</body>
+	<html>	

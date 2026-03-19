@@ -1,0 +1,63 @@
+<DOCTYPE HTML>
+    <html lang="no">
+	    <head>
+		    <title></title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="" />
+			
+			<script>
+			window.onload = oppstart;
+			
+			var tall = [2.2,3.3,-0.4,0.2,-0.6,1.4,0.2,-2.1,1.1,-1.9,-0.1,2.5,1.8,1.7,4.0];
+			<!-- etablerer en array med grader som verdier -->
+		
+			function oppstart() {
+				document.getElementById("btnMinusOgPluss").onclick = sorter;
+				document.getElementById("btnStor").onclick = finnStor;					
+			}
+			
+			function sorter() {
+			<!-- etablerer to variabler, minus og pluss -->
+			for(var i = 0; i < tall.length ; i++) {
+				if(tall[i] < 0) {
+					minus++;
+				}
+			}
+			<!-- en forløkke som finner minus tallene ved å søke gjennom arrayen. Dersom indekstallet er mindre enn 0 legges det til minus -->
+			for(var i = 0; i < tall.length ; i++) {
+				if(tall[i] > 0) {
+					pluss++;
+				}
+			}
+			<!-- en forløkke som finner pluss tallene ved å søke gjennom arrayen. Dersom indekstallet er større enn 0 legges det til pluss -->
+			document.getElementById("txtVisMinusogPluss").innerHTML = "Negative:" + minus + "<br />" + "Positive:" + pluss;
+			}
+			
+			function finnStor() {
+			var stor = tall[0];
+			<!-- etablerer en variabel kalt stor som har samme verdi som er første verdi i arrayen tall -->
+            var dato = 0;
+			<!-- etablerer em variabel kalt dato som er lik 0 -->
+			for (var i = 0; i < tall.length; i++) { 
+				if(tall[i] > stor)  
+				   stor = tall[i];
+				   dato = i + 1;
+			}
+			<!-- lager en for løke som leter gjennom arrayen tall. dersom indekstallet er større en variabelen stor, blir så varibelene stor lik indekstallet. Datoen blir så indekstallet pluss 1 fordi arrayen starter i nulte posisjon ikke første -->
+			document.getElementById("txtVisStor").innerHTML = "Den varmeste dagen var den " + dato + ", da var det " + stor + " grader";
+			}
+			</script>
+			
+			<style>
+			    
+			</style>
+		</head>
+		
+		<body>
+		<h1>Gradetabell</h1>
+		<p><button id="btnMinusOgPluss">Vis Negative og positive tall</button></p>
+		<p id="txtVisMinusogPluss"></p>
+		<p><button id="btnStor">Finn største tall</button></p>
+		<p id="txtVisStor"></p>
+    	</body>
+	<html>	

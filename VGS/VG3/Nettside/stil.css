@@ -1,0 +1,146 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    background-image: url(Bilder/brua.jpg);
+}
+
+#header {
+    width: 970px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#banner < div {
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 970px;
+    height: auto;
+	min-height: 1000px;
+    margin: auto;
+    font-family: sans-serif;
+    font-size: 20px;
+	background-color: #f1f2e7;
+}
+
+.topnav {
+  padding-left: 200px;
+  margin: 0;
+  position: absolute;
+  top: 390px;
+  left: 310px;
+}
+
+
+.topnav a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+
+.topnav a:hover {
+  background-color: grey;
+}
+
+
+.topnav a.active {
+  background-color: #79A772;
+  color: white;
+}
+
+.topnav2 a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.topnav2 {
+  padding-left: 200px;
+  margin: 0;
+  position: absolute;
+  top: 420px;
+  left: 310px;
+}
+
+
+.topnav2 a:hover {
+  background-color: grey;
+}
+
+
+.topnav2 a.active {
+  background-color: #79A772;
+  color: white;
+}
+
+
+header {
+    flex-basis: 100%;
+	padding: 2px;
+}
+
+main {
+	padding-top: 25px;
+	text-align: center;
+}
+
+#highlighted {
+    float: center;
+}
+
+
+table, th, td {
+    border: 1px solid #3f2b68;
+}
+
+h2 {
+	padding-left: 20px;
+}
+
+h1 {
+	position: absolute;
+}
+
+.bilder {
+	padding-top: 100px;
+}
+
+.center { 
+	position: absolute;
+    left: 50%;
+    transform: translate(-50%,-50%);
+	margin-top: 400;
+}
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+

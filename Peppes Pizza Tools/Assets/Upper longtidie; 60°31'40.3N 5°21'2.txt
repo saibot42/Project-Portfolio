@@ -1,0 +1,9 @@
+Upper longtidie; 60°31'40.3"N 5°21'29.6"E
+
+Lower longtidude: 60°23'28.6"N 5°16'52.9"E
+
+
+Right lat: 60°29'18.2"N 5°24'04.4"E
+
+
+Left lat: 60°23'36.5"N 5°15'06.3"E

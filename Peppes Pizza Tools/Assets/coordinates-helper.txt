@@ -1,0 +1,17 @@
+Det som sto som mapbounds, men er ikke nok desimal:'
+(60.23, 60.31, 5.15, 5.24)
+
+Disse tok jeg fra map, men hvorfor er det ikke samme format som andre addresser:
+Upper longitude; 60°31'40.3"N 5°21'29.6"E
+
+Lower longitude: 60°23'28.6"N 5°16'52.9"E
+
+
+Right lat: 60°29'18.2"N 5°24'04.4"E
+
+
+Left lat: 60°23'36.5"N 5°15'06.3"E
+
+
+Dont know if these are example coordinate or not: 
+60.485818645134906, 60.40185804025116, 5.273518237633727, 5.325123134060233

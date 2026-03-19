@@ -1,0 +1,297 @@
+<DOCTYPE HTML>
+    <html lang="no">
+	    <head>
+		    <title></title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="stil.css" />
+			
+			<script>
+			window.onload = oppstart;
+			
+			var maned = ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"];
+			var dato = []
+			dato[0] = [0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[1] = [0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[2] = [0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[3] = [0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[4] = [0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[5] = [0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[6] = [0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[7] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[8] = [0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[9] = [0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[10] = [0,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			dato[11] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			
+			
+			<!-- etablerer en array med grader som verdier og en array med måneder som verdier -->
+			
+			var arrBilder = ["Bilder/img_1.jpg", "Bilder/img_2.jpg", "Bilder/img_3.jpg", "Bilder/img_4.jpg", "Bilder/img_5.jpg", "Bilder/img_6.jpg", "Bilder/img_7.jpg", "Bilder/img_8.jpg"]
+			var h = 0;
+			<!-- etablerer en array som heter arrBilder for bildepresentasjonen med verdier som kilden på bildene som skal vises -->
+		
+			function oppstart() {
+				document.getElementById("lstManed").onchange = fyllDato;
+				document.getElementById("btnReg").onclick = registrer;
+				document.getElementById("lstVis").onchange = sorter;
+				document.getElementById("btnSiste").onclick = presenterTilbake;
+				document.getElementById("btnNeste").onclick = presenterFrem;
+				<!-- lager flere linker til både knapper og listebokser som skal starte forskjellige funksjoner -->
+				
+				var select = document.getElementById("lstManed");
+				var select2 = document.getElementById("lstVis");
+				for(var i = 0; i < maned.length; i++) {
+					var opt = maned[i];
+					var el = document.createElement("option");
+					el.innerHTML = maned[i];
+					el.value = i;
+					select.appendChild(el);
+					var elVis = document.createElement("option");
+					elVis.innerHTML = maned[i];
+					elVis.value = i;
+					select2.appendChild(elVis);
+				}
+				<!-- denne koden fyller listeboksen for måneder med verdier fra maned arrayen. Bruker for løkke og danner elementer som legges til som options i listeboksen -->
+			}
+			
+			function fyllDato() {
+				var select = document.getElementById("lstDag");
+				var valgtMnd = (document.getElementById("lstManed").selectedIndex)-1;
+				for(var i = 0; i <= dato[valgtMnd].length; i++) {
+					var opt = i;
+					var el = document.createElement("option");
+					el.textContent = opt;
+					el.value = opt;
+					select.appendChild(el);
+				}
+				<!-- denne koden fyller dato listeboksen i henhold til valgt måned -->
+			}
+			
+			function registrer() {
+				var tall = document.getElementById("numGrad").value;
+				var maned = (document.getElementById("lstManed").selectedIndex)-1;
+				var dag = (document.getElementById("lstDag").selectedIndex)-1;
+				dato[maned][dag] = parseFloat(tall);
+				<!-- etablerer flere variabler som verdien av input tall og den valgte indeksen i måneden og dag listeboksen -->
+			
+				document.getElementById("numGrad").value = 0;
+				document.getElementById("lstManed").selectedIndex = 0;
+				document.getElementById("lstDag").selectedIndex = 0;
+				<!-- denne koden nullstiller inputboksen og listeboksene -->
+				
+			}
+			
+			function sorter() {
+			<!-- etablerer tre variabler, minus, pluss og maned med verdien av den valgte indeksen -->
+			var minus = 0;
+			var pluss = 0;
+			var valgtMnd = (document.getElementById("lstVis").selectedIndex)-1;
+			var tall = dato[valgtMnd];
+			<!-- etablerer variabel tall som snarvei for dato[valgtmnd] -->
+			
+			for(var i = 0; i < tall.length; i++) {
+				if(tall[i] < 0) {
+					minus++;
+				}
+			}
+			<!-- en forløkke som finner minus tallene ved å søke gjennom arrayen. Dersom indekstallet er mindre enn 0 legges det til minus -->
+			for(var j = 0; j < tall.length; j++) {
+				if(tall[j] > 0) {
+					pluss++;
+				}
+			}
+			<!-- en forløkke som finner pluss tallene ved å søke gjennom arrayen. Dersom indekstallet er større enn 0 legges det til pluss -->
+			
+			var stor = tall[0];
+			<!-- etablerer en variabel kalt stor som har samme verdi som er første verdi i arrayen tall -->
+            var dag = 0;
+			<!-- etablerer em variabel kalt tall som er lik 0 som skal være dato-->
+			
+			for(var k = 0; k < tall.length; k++) {
+				if(tall[k] > stor){  
+				   stor = tall[k];
+				   dag = k + 1;
+				}
+			}
+			<!-- lager en for løke som leter gjennom arrayen dato. dersom indekstallet er større en variabelen stor, blir så varibelene stor lik indekstallet. Datoen blir så indekstallet pluss 1 fordi arrayen starter i nulte posisjon ikke første -->
+			document.getElementById("txtVis").innerHTML = "Dager med kuldegrader: " + minus + "<br />" + "Dager med varmegrader: " + pluss + "<br />" + "Den varmeste dagen var den " + dag + ", da var det " + stor + " grader";
+			visDiagram(valgtMnd);
+			<!-- funskjonskall for visning av diagram -->
+			}
+			
+			function visDiagram(valgtMnd) {
+				var nyDiaTemp = 0;
+                var soyle = "";
+                var nullSoyle = "";
+				
+				for(var j = 0; j < 31; j++) {
+					soyle = "tempP" + j;
+					nullSoyle = "tempM" + j;
+					document.getElementById(nullSoyle).style.height = "0px";
+					document.getElementById(soyle).style.height = "0px";
+				}
+               
+                //Solye og null soyle er åpne fordi det skal kunne være mulig å legge til selv mens den nye tempen alltid skal starte med 0
+                for(var i = 0; i < dato[valgtMnd].length; i++) {
+                    nyDiaTemp = dato[valgtMnd][i];
+                    if(nyDiaTemp > 0) {
+                        soyle = "tempP" + i;
+                        nullSoyle = "tempM" + i;
+                        document.getElementById(soyle).style.height = (nyDiaTemp * 20) + "px";
+                        document.getElementById(nullSoyle).style.height = "0px";
+                    }
+                // Her etablerer vi søylen til den valgte måneden som blir lagt til og ut i fra den så skal søylen som er pluss grader øke med det anntallet som er valgt ut i fra valgt temp og måned, den skal da gi t resultat i pixler på søyle diagrammet valgt ut i fra stilen
+                    else if(nyDiaTemp < 0) {
+                        nyDiaTemp = Math.abs(nyDiaTemp);
+                        soyle = "tempM" + i;
+                        nullSoyle = "tempP" + i;
+                        document.getElementById(soyle).style.height = (nyDiaTemp * 20) + "px";
+                        document.getElementById(nullSoyle).style.height = "0px";
+                //Vis temperaturen ikke er pluss for den måneden er minus så vil den temp M(minus) etablere et diagram med piksler hvor da søylediagrammet vil gå nedover
+                    }   
+                }
+            }
+			
+			function presenterFrem() {
+			if (h < 7) {
+				h++;
+				document.getElementById("lysbilde").src = arrBilder[h];
+			}
+			else {
+				h = 0;
+				document.getElementById("lysbilde").src = arrBilder[h];
+			}
+			}
+			
+			function presenterTilbake() {
+			if (h < 7) {
+				h--;
+				document.getElementById("lysbilde").src = arrBilder[h];
+			}
+			else {
+				h = 7;
+				document.getElementById("lysbilde").src = arrBilder[h];
+			}
+			}
+			<!-- kode for bildepresentasjon som styres av to piler. Bruker if setting på hver funksjon som velger om det skal subtrahere, addisere eller skifte i til et nytt spesifikt tall for å loope presentasjonen -->
+	
+			</script>
+			
+			<style>
+			
+			</style>
+		</head>
+		<header id="header">
+            <img style="display: block; background-size: cover;" src="banner.jpg" width="100%" height="auto;">
+		</header>
+		<body>
+		<h2>Registrer temperatur</h2>
+		<div id="reg">
+			<select id="lstManed"> 
+				<option>Velg Måned...</option>
+			</select>
+			<select id="lstDag"> 
+				<option>Velg Dag...</option>
+			</select>
+			<!-- listeboks for måned og dato -->
+			<p>Grader: <input type="number" id="numGrad"></p>
+			<!-- input for grader -->
+			<button type="button" id="btnReg">Registrer</button>
+		</div>
+		<br />
+		<h2>Vis værdata</h2>
+		<div id="vis">
+			<select id="lstVis"> 
+				<option>Velg Måned...</option>
+			</select>
+			<!-- velger måned for visning av tabell og starting av sortering -->
+		</div>
+		<p id="txtVis"></p>
+		<div id="overordnet">
+			<div id="wrapper">
+				<div id="diagramP">
+					<div id="tempP0" class="pluss"></div>
+					<div id="tempP1" class="pluss"></div>
+					<div id="tempP2" class="pluss"></div>
+					<div id="tempP3" class="pluss"></div>
+					<div id="tempP4" class="pluss"></div>
+					<div id="tempP5" class="pluss"></div>
+					<div id="tempP6" class="pluss"></div>
+					<div id="tempP7" class="pluss"></div>
+					<div id="tempP8" class="pluss"></div>
+					<div id="tempP9" class="pluss"></div>
+					<div id="tempP10" class="pluss"></div>
+					<div id="tempP11" class="pluss"></div>
+					<div id="tempP12" class="pluss"></div>
+					<div id="tempP13" class="pluss"></div>
+					<div id="tempP14" class="pluss"></div>
+					<div id="tempP15" class="pluss"></div>
+					<div id="tempP16" class="pluss"></div>
+					<div id="tempP17" class="pluss"></div>
+					<div id="tempP18" class="pluss"></div>
+					<div id="tempP19" class="pluss"></div>
+					<div id="tempP20" class="pluss"></div>
+					<div id="tempP21" class="pluss"></div>
+					<div id="tempP22" class="pluss"></div>
+					<div id="tempP23" class="pluss"></div>
+					<div id="tempP24" class="pluss"></div>
+					<div id="tempP25" class="pluss"></div>
+					<div id="tempP26" class="pluss"></div>
+					<div id="tempP27" class="pluss"></div>
+					<div id="tempP28" class="pluss"></div>
+					<div id="tempP29" class="pluss"></div>
+					<div id="tempP30" class="pluss"></div>
+					<!-- diagram for plussgrader -->
+				</div>
+				<div id="diagramM">
+					<div id="tempM0" class="minus"></div>
+					<div id="tempM1" class="minus"></div>
+					<div id="tempM2" class="minus"></div>
+					<div id="tempM3" class="minus"></div>
+					<div id="tempM4" class="minus"></div>
+					<div id="tempM5" class="minus"></div>
+					<div id="tempM6" class="minus"></div>
+					<div id="tempM7" class="minus"></div>
+					<div id="tempM8" class="minus"></div>
+					<div id="tempM9" class="minus"></div>
+					<div id="tempM10" class="minus"></div>
+					<div id="tempM11" class="minus"></div>
+					<div id="tempM12" class="minus"></div>
+					<div id="tempM13" class="minus"></div>
+					<div id="tempM14" class="minus"></div>
+					<div id="tempM15" class="minus"></div>
+					<div id="tempM16" class="minus"></div>
+					<div id="tempM17" class="minus"></div>
+					<div id="tempM18" class="minus"></div>
+					<div id="tempM19" class="minus"></div>
+					<div id="tempM20" class="minus"></div>
+					<div id="tempM21" class="minus"></div>
+					<div id="tempM22" class="minus"></div>
+					<div id="tempM23" class="minus"></div>
+					<div id="tempM24" class="minus"></div>
+					<div id="tempM25" class="minus"></div>
+					<div id="tempM26" class="minus"></div>
+					<div id="tempM27" class="minus"></div>
+					<div id="tempM28" class="minus"></div>
+					<div id="tempM29" class="minus"></div>
+					<div id="tempM30" class="minus"></div>
+					<!-- diagram for minusgrader -->
+				</div>
+			</div>
+		</div>
+		<img src="sun_cloud.gif" alt="animation" width="500" height="500">
+		<!-- animasjon lagd i animate -->
+		<br />
+		<br />
+		<br />
+		<br />
+		<div id="presentasjon"
+			<div class="bilder">
+				<img src="Bilder/img_1.jpg" id="lysbilde" style="width:100%; height: 500px;">
+			</div>
+			<a class="prev" id="btnSiste">&#10094;</a>
+			<a class="next" id="btnNeste">&#10095;</a>
+			<!-- bildepresentasj og og knapper -->
+		</div>
+    	</body>
+	<html>	

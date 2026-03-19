@@ -1,0 +1,172 @@
+body {
+	background-image: url(blue.jpeg);
+	background-repeat: no-repeat;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 1000px;
+    margin: auto;
+    font-family: sans-serif;
+    font-size: 20px;
+	background-color: #ffffff00;
+}
+#wrapper2 {
+	display: flex;
+	flex-direction: column;
+    flex-wrap: wrap;
+    width: 1100px;
+	min-height: 700px;
+    font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+    background-color: rgb(27,27,27);
+	border-radius: 25px;
+	color: #D5D5D5;
+	padding-top: 15px;
+}
+
+#wrapper3 {
+	display: flex;
+	flex-direction: column;
+    flex-wrap: wrap;
+    width: 1100px;
+	min-height: 1000px;
+    font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+    background-color: rgb(27,27,27);
+	border-radius: 25px;
+	color: #D5D5D5;
+	padding-top: 15px;
+}
+
+#kalkulator {
+    display: flex;
+    flex-wrap: wrap;
+	margin-left: 10px;
+}
+
+#hus {
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+}
+
+#bolig {
+	padding-right: 10px;
+}
+
+#husstand {
+	padding-right: 10px;
+}
+
+#mat {
+	padding-top: 200px;
+	margin-top: 10px;
+}
+
+#bilde_info {
+	padding-top: 230px;
+	margin-left: 200px;
+}
+
+img {
+	border-radius: 25px;
+}
+
+input {
+	border-radius: 25px;
+}
+
+#knapp {
+	padding-left: 10px;
+}
+
+.valg {
+  margin: 0;
+  position: absolute;
+  top: 390px;
+  left: 440px;
+}
+
+.valg a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  border-radius: 25px;
+  background-color: rgb(70,95,110,0.4)
+}
+
+.valg a:hover {
+  background-color: grey;
+}
+
+.nav {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.nav a {
+  color: #D5D5D5;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+  font-size: 17px;
+  background-color: rgb(27,27,27);
+  width: 1100px;
+  border-radius: 25px;
+}
+
+.nav a:hover {
+  background-color: grey;
+}
+
+.nav a.active {
+  background-color: #465F6E;
+  color: white;
+}
+
+#hus {
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+}
+
+#juletid {
+	margin-left: 280px;
+}
+
+#bakgrunn {
+	background-image: url(juletre.jpg);
+	width: 600px;
+	height: 800px;
+	background-repeat: no-repeat;
+	position: absolute;
+	overflow: hidden;
+}
+
+#snofnug {
+	background-image: url(snoflak.jpg);
+	position: absolute;
+	width: 150px;
+	height: 169px;
+	left: 50px;
+	animation: faller 5s infinite;
+	animation-play-state: paused;
+}
+
+@keyframes faller {
+	0% {top:-200px;}
+	50% {top:200px; left:200px; transform: rotate180deg;}
+	100% {top:500px;}
+} 
+

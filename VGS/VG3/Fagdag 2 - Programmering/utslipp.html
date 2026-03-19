@@ -1,0 +1,159 @@
+<DOCTYPE HTML>
+    <html lang="no">
+	    <head>
+		    <title>Ditt CO2 Utslipp</title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="stil.css" />
+			
+			<script>
+			 	window.onload = oppstart;
+				
+				function oppstart() {
+					document.getElementById("btnVis").onclick = beregn;
+                    /*Henter frem knapp btnVis for å utføre funksjon beregn når den er trykekt på*/					
+				}
+				
+				function beregn() {
+				    var stoerrelse = parseInt (document.getElementById("txtStor").value);
+					var voksne = parseInt (document.getElementById("txtVok").value);
+					var barn = parseInt (document.getElementById("txtBarn").value);
+					var stromBruk = parseInt (document.getElementById("txtStrom").value);
+					var bolig = document.getElementById("lstBolig").value;
+					var oppvarming = document.getElementById("lstVarme").value;
+					
+					/*Etablerer variabler for nummer og nedtrekksliste som er verdien av inputen*/
+					
+					if (bolig === lstLei) {
+					    var utslipp1 = stoerrelse * voksne * 0.04;
+                        var utslipp2 = stoerrelse * barn * 0.03;
+						
+						/*To variabler som er utslipp1 og 2 for leilighet.*/
+						/*Utslipp1 multipliserer størrelsen av huset, antall voksne og tonn co2 pr kvadratmeter for en voksen.*/
+						/*Utlsipp2 multipliserer størrelsen av huset, antall voksne og tonn co2 per kvadramter for et barn*/
+						
+                        if (oppvarming === lstStrom) {
+						    var utslipp3 = stromBruk * (voksen + barn) * 0.02;
+						}
+						
+						else if (oppvarming === lstFjern) {
+							var utslipp3  = 0;
+						}
+						
+						else if (oppvarming === lstFyr) {
+							var utslipp3 = stoerrelse * 0.05;
+						}
+					}
+					
+					/*Bruker if og else if for å differeniere mellom type oppvarming valgt i nedtrekksliste, der utslipp 3 er bestemt ut i fra formelen for hver type oppvarming*/ 
+					
+					else if (bolig === lstHus) {
+						var utslipp1 = stoerrelse * voksne * 0.05;
+						var utslipp2 = stoerrelse * barn * 0.04;
+						
+						/*Samme som variblene i leilighet bare med en høyere verdi for co2 per kvadramter per voksen og barn*/
+						
+						if (oppvarming === lstStrom) {
+							var utslipp3 = stromBruk * (voksne + barn) * 0.03;
+						}
+						
+						else if (oppvarming === lstFjern) {
+							var utslipp3  = 0;
+						}
+						
+						else if (oppvarming === lstFyr) {
+							var utslipp3 = stoerrelse * 0.06;
+						}
+					}
+					/*Bruker if og else if for å differeniere mellom hus og leilighet som har forskjellige verdier*/
+					
+					var kjott = parseInt (document.getElementById("txtKjott").value); 
+					var fisk = parseInt (document.getElementById("txtFisk").value);
+					var vegetar = parseInt (document.getElementById("txtVeg").value);
+					
+					/*Etablerer variabler for antall måltider spist av hvert matslag utifra verdien til hver input*/
+
+					var utslippKjott = kjott * 0.67;
+					var utslippFisk = fisk * 0.76;
+					var utslippVegetar = vegetar * 0.75;
+					
+					/*Etablerer variabler for matutslippet basert på hvor mange måltider som blir spist av hver gruppe(fisk/kjott/vegetar) og co2 utslippet av en porsjon*/
+					
+					var sum = utslipp1 + utslipp2 + utslipp3 + utslippKjott + utslippFisk + utslippVegetar;
+				    
+					/*Summerer sammen alle utslippene*/
+					
+					document.getElementById("txtInfo").innerHTML = "Ditt co2 utslipp estimeres til " +  sum + " tonn i året.";
+					
+					/*Viser utslippet ved hjelp av innerHTML*/
+					}
+                     				
+			</script>
+			
+			<style>
+			body {
+				background-image: url(blue.jpeg);
+				background-repeat: no-repeat;
+			}
+            html, body {
+				margin: 0; 
+				height: 100%; 
+				overflow: hidden;
+			}  
+			</style>
+		</head>
+		
+		<body>
+		<div id="wrapper2">
+			<div class="nav">
+			    <a href="index.html">Home</a> 
+				<a class="active" href="utslipp.html">Sjekk utslippet ditt</i></a>
+				<a href="vinter.html">Snart jul</a>
+			</div>
+			<br />
+			<br />
+			<div id="kalkulator">
+				<div id="hus">
+					<div id="bolig">
+						<h3>Bolig</h3>
+						<p>Hva bor du i?</p>
+						<select id="lstBolig">
+							<option value="1" id="lstLei">Leilighet</option>
+							<option value="1" id="lstHus">Hus</option>
+						</select>
+						<p>Størrelse: <input type="text" id="txtStor">m2</p>
+					</div>
+					<div id="husstand">
+						<h3>Husstand</h3>
+						<p>Antall voksne: <input type="text" id="txtVok" />
+						<p>Antall barn: <input type="text" id="txtBarn">(0 - 16 år)</p>
+					</div>
+					<div id="oppvarming">
+						<h3>Oppvarming</h3>
+						<select id="lstVarme">
+							<option value="1" id="lstStrom">Strøm</option>
+							<option value="1" id="lstFjern">Fjernvarme</option>
+							<option value="1" id="lstFyr">Fyringsolje</option>
+						</select>
+						<p>Strømforbuk pr år: <input type="text" id="txtStrom">kWh</p>
+					</div>  
+				</div>
+				<div id="mat">
+					<h3>Mat</h3>
+					<p>Antall middager pr uke</p>
+					<p>Kjøttmiddager <input type="text" id="txtKjott" />
+					<p>Fiskemiddager <input type="text" id="txtFisk" />
+					<p>Vegetarmiddager <input type="text" id="txtVeg" />
+				</div>
+				<div id="bilde_info">
+					<img src="royk.gif" width="300px" height="auto">
+					<p id="txtInfo"></p>
+				</div>
+			</div>
+			<div id="knapp">
+			    <button type="button" id="btnVis">Beregn</button>
+			</div>
+			<!Lager forskjellige diver for å skille mellom vær kategori så det blir enklere å lese og finne fram, og så legger jeg alt inn i en div kalt kalkulator!>
+		</div>
+	    <!Legger kalkulator diven og knapp diven i en div kalt wrapper2 som skal hjelpe til å stillegge det i css!>
+    	</body>
+	</html>

@@ -1,0 +1,55 @@
+<!DOCKTYPE html>
+<html>
+    <head>
+	    <title></title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="stil.css" />
+	</head>
+	<body>
+        <div id="wrapper">
+		    <header>
+			    <h1>Fristedet</h1>
+			</header>
+			
+			<nav>
+			    <ul>
+				    <li><a href="index.html"><img src="bilder/knapp-home.png" /></a></li>
+					<li><a href="ansatte.html"><img src="bilder/knapp-ansatte.png" /></a></li>
+					<li><a href="kontakt_oss.html"><img src="bilder/knapp-kontakt.png" /></a></li>
+				</ul>
+			</nav>
+			
+			<main>
+			    <div>
+				    <h2>Ansatte</h2>
+				    <p>Leder er Nils Govertsen, han er ansatt i halv stilling og har ansvaret for økonomien, det øvrige personalet og driften av Fristedet. 
+				       Nils er tilgjengelig på telefon 98976555 og på e-post treffes han på nils@fristedet.no og han er fast på klubben hver mandag, onsdag og fredag ettermiddag.</p>
+                    <p>Ungdomsarbeider Lena Jensen er ansatt på heltid, med spesielt ansvar for kjøkken, vedlikehold, data og turaktiviteter. 
+				       Hun er tilstede på klubben hver ettermiddag, unntatt fredag. Hun er også tilgjengelig på telefon 94532565, på e-post treffes hun på adressen lena@friststedet.no</p> 
+                    <p>Frank Sørensen er miljøarbeider på ungdomsklubben, han har et spesielt ansvar for trimgruppa og basket og bordtennis aktiviteter. 
+				       Han er tilgjengelig så å si hver ettermiddag på klubben. Han har e-postadresse frank@fristedet.no</p>
+                </div>
+			    
+			    <div class="bildegalleri">
+				    <a target="_blank" href="bilder/nilsgovertsen.jpg">
+					    <img class="aktivitetsbilde" src="bilder/nilsgovertsen.jpg" alt="nilsgovertsenbilde" />
+			        </a>
+				    <div>Nils Govertsen</div>
+			    </div>
+				
+		        <div class="bildegalleri">
+				    <a href="_blank" href="bilder/lenajensen.jpg">
+					    <img class="aktivitetsbilde" src="bilder/lenajensen.jpg" alt="lenajensenbilde" />
+				    </a>
+			        <div>Lena Jensen</div>
+			    </div>
+				
+			    <div class="bildegalleri">
+				    <a target="_blank" href="bilder/franksorensen.jpg">
+					    <img class="aktivitetsbilde" src="bilder/franksorensen.jpg" alt="franksorensenbilde" />
+				    </a>
+			        <div>Frank Sørensen</div>
+			    </div>
+		    </main>	
+	</body>
+</html

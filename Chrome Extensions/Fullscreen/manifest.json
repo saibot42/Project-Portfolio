@@ -1,0 +1,19 @@
+{
+    "name": "Fullscreen with tabs",
+    "version": "0.0.1",
+    "description": "Allows videos to be viewed in a different type of fullscreen",
+    "manifest_version": 3,
+    "author": "Tobias Bakketun Erichsen",
+    "icons": {
+        "48": "images/48.png",
+        "128": "images/128.png"
+    },
+    "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+
+}

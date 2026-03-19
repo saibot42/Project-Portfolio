@@ -1,0 +1,24 @@
+Ideas:
+1. Deliver pizzas
+	- Story driven
+	- Talking to colorful npc's
+	-
+
+2. Uncover mysteries
+
+3. Money system
+	- Get money per pizza delivered
+	- Get tips for saying the right stuff
+	- Cosmetics, powerUps (walk faster / get car)
+
+
+
+One time events (Mini-games)
+1.  Avoid collisions, never stops walking and hitting stuff hurts him
+	- Could be a simple small part of the game
+	- One time event
+	- Maybe ice makes him not stop walking
+
+
+
+

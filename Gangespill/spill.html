@@ -1,0 +1,66 @@
+<DOCTYPE HTML>
+    <html lang="no">
+	    <head>
+		    <title></title>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="stil.css" />
+			
+			<script>
+			window.onload = oppstart;
+			var num1;
+			var num2;
+			var answer;
+			
+			function oppstart(){
+				document.getElementById("btnStart").onclick = input;				
+			}
+			
+			function giveNumber() {
+				number = Math.floor(Math.random() * 11);
+				return number;
+			}
+			
+			function solve(num1, num2) {
+				var answer = num1 * num2;
+				return answer;
+			}
+			
+			function input() {
+				document.getElementById("numSvar").value = 0;
+				document.getElementById("utskrift").innerHTML = "";
+				var num1 = giveNumber();
+				var num2 = giveNumber();
+				var answer = solve(num1, num2);
+				
+				var question = "Hva er " + num1 + "·" + num2 + "? ";
+				document.getElementById("sporsmaal").innerHTML = question;
+				
+				document.getElementById("btnSvar").onclick = output;	
+				
+				function output() {
+					svar = document.getElementById("numSvar").value;
+					if (svar == answer) {
+						document.getElementById("utskrift").innerHTML = 'Riktig!! <br> Trykk på knappen "Nytt Spill"';
+					}
+					else {
+						 document.getElementById("utskrift").innerHTML = 'Sorry, men svaret er ' + answer + '<br> Trykk på knappen "Nytt Spill"';
+					}
+			    }
+			}
+			</script>
+		</head>
+		<body>
+			<div class="spill">
+				<div id="intro">
+					<h1 style="font-size:50px"><mark>Gange</mark> Spillet</h1>
+					<button id="btnStart">Nytt Spill</button>
+				</div>
+				<div id="rest">
+					<p id="sporsmaal"color="#344e41"></p>
+					<input type="number" id="numSvar" placeholder="Skriv svaret ditt her!">
+					<br></br><button id="btnSvar">Svar</button>
+					<p id="utskrift"></p>
+				</div>
+			</div>
+    	</body>
+	<html>	

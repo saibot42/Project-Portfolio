@@ -26,6 +26,11 @@ public class Address {
 
     //TODO: Maybe override ToString method to make the visual representation better
 
+    @Override
+    public String toString() {
+       return streetName + " " + streetNumber.toString() + ", " + areaCode + " " + areaName;
+    }
+
     public String getStreetName() {
         return streetName;
     }

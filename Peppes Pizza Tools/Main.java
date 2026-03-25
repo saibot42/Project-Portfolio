@@ -1,4 +1,6 @@
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +30,9 @@ public class Main {
 
         startGUI(tripOverview, driverOverview);
 
-        WeightedGraph<V, Integer> graph = createGraph(peppesAddress, customers);
+        //WeightedGraph<V, Integer> graph = createGraph(peppesAddress, customers);
 
-        Clustering clustering = new Clustering(graph, graph.getFirstNode());
+        //Clustering clustering = new Clustering(graph, graph.getFirstNode());
     }
 
     private static ArrayList<Customer> createCustomers() {
@@ -48,13 +50,15 @@ public class Main {
 
     private static TripOverview createTrips(ArrayList<Customer> customers) {
         TripOverview tripOverview = new TripOverview();
+        LocalDate today = LocalDate.now();
         
-        tripOverview.addTrip(new Trip(Time.valueOf("12:30:00"), customers.get(0) ));
-        tripOverview.addTrip(new Trip(Time.valueOf("14:00:00"), customers.get(1) ));
-        tripOverview.addTrip(new Trip(Time.valueOf("15:00:00"), customers.get(2) ));
-        tripOverview.addTrip(new Trip(Time.valueOf("16:30:00"), customers.get(3) ));
-        tripOverview.addTrip(new Trip(Time.valueOf("17:45:00"), customers.get(4) ));
-        tripOverview.addTrip(new Trip(Time.valueOf("18:15:00"), customers.get(5)  ));
+        // 2. Combine today's date with the parsed time string for each trip
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("12:30:00")), customers.get(0)));
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("14:00:00")), customers.get(1)));
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("15:00:00")), customers.get(2)));
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("16:30:00")), customers.get(3)));
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("17:45:00")), customers.get(4)));
+        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("18:15:00")), customers.get(5)));
 
         return tripOverview;
     }
@@ -63,7 +67,7 @@ public class Main {
         DriverOverview driverOverview = new DriverOverview();
         //Add drivers
         Driver driver1 = new Driver("Stian", new ImageIcon("assets/stian.jpg").getImage());
-        Driver driver2 = new Driver("Nocco", new ImageIcon("assets/nocco.jpg").getImage());
+        Driver driver2 = new Driver("Nocco", new ImageIcon("assets/nicho.jpg").getImage());
         Driver driver3 = new Driver("Regine", new ImageIcon("assets/regina.jpg").getImage());
 
         driverOverview.addDriver(driver1);
@@ -106,9 +110,8 @@ public class Main {
 
         mapImage = mapImage.getScaledInstance(scaledWidth, screenHeight, Image.SCALE_SMOOTH);
 
-        // Set the map bounds (replace with actual bounds)
-        MapBounds mapBounds = new MapBounds(60.531074598249866, 60.39172710670641,5.4011371170849545, 5.251750010413164);  // Example coordinates
-
+        // Set the map bounds
+        MapBounds mapBounds = new MapBounds(60.531074598249866, 60.39172710670641,5.4011371170849545, 5.251750010413164);
         PixelGrid grid = new PixelGrid(0, 0, mapImage.getWidth(null), mapImage.getHeight(null));
         // Create the MapManager with map bounds and image path
         MapManager mapManager = new MapManager(mapBounds, mapImage, grid);

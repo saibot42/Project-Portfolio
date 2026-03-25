@@ -13,5 +13,5 @@ Right lat: 60°29'18.2"N 5°24'04.4"E
 Left lat: 60°23'36.5"N 5°15'06.3"E
 
 
-Dont know if these are example coordinate or not: 
+The exact mapBounds
 60.485818645134906, 60.40185804025116, 5.273518237633727, 5.325123134060233

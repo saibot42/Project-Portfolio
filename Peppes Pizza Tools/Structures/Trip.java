@@ -1,21 +1,43 @@
 package Structures;
-import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.Duration;
 
 public class Trip {
-    private Time orderTime;
+    private LocalDateTime orderTime;
     private Customer customer;
     private Address address;
     private Driver driver;
 
-    public Trip(Time orderTime, Customer customer) {
+    public Trip(LocalDateTime orderTime, Customer customer) {
         this.orderTime = orderTime;
         this.address = customer.getAddress();
         this.customer = customer;
     }
 
-    public Time getOrderTime() {
+    /**
+     * Calculates how many minutes there are left before the trip is considered "late".
+     * 
+     * Within 60 minutes of order time
+     * 
+     * @return Integer minutes until trip is late
+     */
+    public Integer minutesLeft() {
+        if (orderTime == null) {
+            return 0; // Safety check
+        }
+
+        // Calculate the difference between the order time and right now
+        LocalDateTime now = LocalDateTime.now();
+        long minutesPassed = Duration.between(orderTime, now).toMinutes();
+        
+        // Subtract the minutes passed from the 60-minute limit
+        return (int) (60 - minutesPassed);
+    }
+
+    public LocalDateTime getOrderTime() {
         return orderTime;
     }
+    
     public Customer getCustomer() {
         return customer;
     }

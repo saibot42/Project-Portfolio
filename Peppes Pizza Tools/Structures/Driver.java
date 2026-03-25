@@ -42,6 +42,15 @@ public class Driver {
         return driverStatus;
     }
 
+    /**
+     * Set new driverStatus
+     * @return the new DriverStatus
+     */
+    public DriverStatus updateDriverStatus(DriverStatus status) {
+        this.driverStatus = status;
+        return driverStatus;
+    }
+
     private void rescaleImage() {
         Integer newWidth = 200;
         Integer newHeight = 200;

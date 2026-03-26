@@ -2,6 +2,7 @@ package planners;
 
 import java.rmi.UnexpectedException;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -32,12 +33,10 @@ public class DispatchSystem {
         Trip firstTrip = queue.peek();
         //V vTrip = graph.vertices().iterator().next();
 
-        Time orderTime = firstTrip.getOrderTime();
+        LocalDateTime orderTime = firstTrip.getOrderTime();
         Integer deliveryTime = firstTrip.calculateTripTime(null, null);
         
 
         return nextDrive;
     }
-
-    private is 
 }

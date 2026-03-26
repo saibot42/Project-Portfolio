@@ -18,6 +18,7 @@ public class Driver {
         this.name = name;
         this.pfPicture = pfPicture;
         this.activeTrips = new ArrayList<>();
+        this.driverStatus = DriverStatus.Available;
 
         rescaleImage();
     }
@@ -52,9 +53,8 @@ public class Driver {
     }
 
     private void rescaleImage() {
-        Integer newWidth = 200;
-        Integer newHeight = 200;
-        pfPicture = pfPicture.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);    
+        Integer newSize = 350;
+        pfPicture = pfPicture.getScaledInstance(newSize, newSize, Image.SCALE_DEFAULT);    
     }
 
 }

@@ -16,7 +16,7 @@ public class dashboardGUI extends JPanel {
     private ArrayList<Trip> tripList;
     private ArrayList<Driver> driverList;
     private Rectangle screenBounds;
-    private final Color boxColor = new Color(230, 230, 230);
+    private final Color boxColor = new Color(222, 219, 217);
 
     public dashboardGUI(MapManager manager, TripOverview trips, DriverOverview drivers, Rectangle screeBounds) {
         this.manager = manager;
@@ -61,7 +61,6 @@ public class dashboardGUI extends JPanel {
 
     // Draw the grid cells
     private void drawGrid(Graphics2D g2d) {
-        // g.setColor(new Color(255, 255, 255, 50));  // Semi-transparent grid lines
         g2d.setColor(new Color(0, 0, 0, 0)); // Fully transparent
 
         for (int x = 0; x < manager.getPixelGrid().getGridWidth(); x++) {
@@ -125,7 +124,7 @@ public class dashboardGUI extends JPanel {
                 drawRoundedImage(g2d, driverImage, imgX, imgY, imgWidth, imgHeight, 30);
 
                 // -- DRAW DRIVER INFO SECTION -- \\
-                g2d.setFont(new Font("Arial", Font.BOLD, 22));
+                g2d.setFont(new Font("Arial", Font.BOLD, 35));
                 String driverName = driver.getName();
 
                 //Calculate the width of the drivers name
@@ -133,13 +132,14 @@ public class dashboardGUI extends JPanel {
                 int textWidth = metrics.stringWidth(driverName);
 
                 int nameX = rowX + ((driverBoxWidth - textWidth) / 2);
-                int nameY = imgY + imgHeight + 40; // Place text below the image
+                int nameY = imgY + imgHeight + 50; // Place text below the image
 
                 int nameBoxY = imgY + imgHeight;
-                int nameBoxWidth = driverBoxWidth;
+                int nameBoxWidth = driverBoxWidth / 2;
                 int nameBoxHeight = (rowY + rowHeight) - nameBoxY;
+                int nameBoxX = imgX + ((imgWidth - nameBoxWidth) / 2);
 
-                drawRoundedBox(g2d, rowX, nameBoxY, nameBoxWidth, nameBoxHeight, 9, boxColor);
+                drawRoundedBox(g2d, nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, 9, boxColor);
 
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(driver.getName(), nameX, nameY);
@@ -150,7 +150,6 @@ public class dashboardGUI extends JPanel {
 
             // --- DRAW TRIP(S) SECTION ---
             int tripSectionX = rowX + driverBoxWidth;
-            // g.drawRect(tripSectionX, rowY, tripBoxWidth, rowHeight); // Draw the outer border for the entire trip section of this driver
 
             ArrayList<Trip> driverTrips = driver.getTripsForDriver(); // Get all current trips for the driver we are working on
             if (driverTrips != null && !driverTrips.isEmpty()) {
@@ -201,6 +200,8 @@ public class dashboardGUI extends JPanel {
                 g2d.setFont(new Font("Arial", Font.ITALIC, 14));
                 g2d.drawString("No active trips", tripSectionX + 15, rowY + 30);
             }
+
+            //g2d.drawLine(rowX, rowY, remainingWidth, 5); // Draw a line at the bottom of the top and bottow of the driver (bug)
         }
     }
 

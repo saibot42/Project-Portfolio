@@ -65,6 +65,7 @@ public class Main {
 
     private static DriverOverview createDrivers(DeliveryOverview deliveries) {
         DriverOverview driverOverview = new DriverOverview();
+        ArrayList<Delivery> deliveryList = deliveries.getAllDeliveries();
         //Add drivers
         Driver driver1 = new Driver("Stian", new ImageIcon("assets/stian.jpg").getImage());
         Driver driver2 = new Driver("Nocco", new ImageIcon("assets/nicho.jpg").getImage());
@@ -77,16 +78,16 @@ public class Main {
         //TODO 1: Assigning drivers should either be done automatically by the system or there should be an interactive component that allows manual selection
         //TODO 2: When registering a delivery to the driver, it should automatically update the driver and the deliveries class. Observer?
         //Assign drivers to deliveries
-        deliveries.getAllDeliveries().get(0).assignTripToDriver(driver1);
-        deliveries.getAllDeliveries().get(1).assignTripToDriver(driver2);
-        deliveries.getAllDeliveries().get(2).assignTripToDriver(driver2);
-        deliveries.getAllDeliveries().get(3).assignTripToDriver(driver3);
+        deliveryList.get(0).assignTripToDriver(driver1);
+        deliveryList.get(1).assignTripToDriver(driver2);
+        deliveryList.get(2).assignTripToDriver(driver2);
+        deliveryList.get(3).assignTripToDriver(driver3);
 
         //Add delivery to drivers list of deliveries
-        driver1.addDelivery(deliveries.getAllDeliveries().get(0));
-        driver2.addDelivery(deliveries.getAllDeliveries().get(1));
-        driver2.addDelivery(deliveries.getAllDeliveries().get(2));
-        driver3.addDelivery(deliveries.getAllDeliveries().get(3));
+        driver1.addDelivery(deliveryList.get(0));
+        driver2.addDelivery(deliveryList.get(1));
+        driver2.addDelivery(deliveryList.get(2));
+        driver3.addDelivery(deliveryList.get(3));
 
         return driverOverview;
     }

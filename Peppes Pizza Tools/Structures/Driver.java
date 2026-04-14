@@ -11,13 +11,13 @@ import java.util.ArrayList;
 public class Driver {
     private String name;
     private Image pfPicture;
-    private ArrayList<Trip> activeTrips;
+    private ArrayList<Delivery> activeDeliveries;
     private DriverStatus driverStatus;
 
     public Driver(String name, Image pfPicture) {
         this.name = name;
         this.pfPicture = pfPicture;
-        this.activeTrips = new ArrayList<>();
+        this.activeDeliveries = new ArrayList<>();
         this.driverStatus = DriverStatus.Available;
 
         rescaleImage();
@@ -31,12 +31,12 @@ public class Driver {
         return pfPicture;
     }
 
-    public ArrayList<Trip> getTripsForDriver() {
-        return activeTrips;
+    public ArrayList<Delivery> getDeliveriesForDriver() {
+        return activeDeliveries;
     }
 
-    public void addTrip(Trip trip) {
-        activeTrips.add(trip);
+    public void addDelivery(Delivery delivery) {
+        activeDeliveries.add(delivery);
     }
 
     public DriverStatus getDriverStatus() {

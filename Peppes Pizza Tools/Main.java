@@ -14,7 +14,7 @@ import graph.V;
 import graph.WeightedGraph;
 import planners.Clustering;
 import planners.DriverOverview;
-import planners.TripOverview;
+import planners.DeliveryOverview;
 import planners.calculateDistances;
 import planners.Clustering;
 import utils.MapManager;
@@ -25,10 +25,10 @@ public class Main {
 
         Address peppesAddress = new Address("Åsamyrane", 82, 5116, "Ulset", new MapCoordinate(60.46143652267689, 5.322624149347732));
         ArrayList<Customer> customers = createCustomers();
-        TripOverview tripOverview = createTrips(customers);
-        DriverOverview driverOverview = createDrivers(tripOverview);
+        DeliveryOverview deliveryOverview = createDeliveries(customers);
+        DriverOverview driverOverview = createDrivers(deliveryOverview);
 
-        startGUI(tripOverview, driverOverview);
+        startGUI(deliveryOverview, driverOverview);
 
         //WeightedGraph<V, Integer> graph = createGraph(peppesAddress, customers);
 
@@ -48,22 +48,22 @@ public class Main {
         return customers;
     }
 
-    private static TripOverview createTrips(ArrayList<Customer> customers) {
-        TripOverview tripOverview = new TripOverview();
+    private static DeliveryOverview createDeliveries(ArrayList<Customer> customers) {
+        DeliveryOverview deliveryOverview = new DeliveryOverview();
         LocalDate today = LocalDate.now();
         
-        // 2. Combine today's date with the parsed time string for each trip
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("12:30:00")), customers.get(0)));
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("14:00:00")), customers.get(1)));
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("15:00:00")), customers.get(2)));
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("16:30:00")), customers.get(3)));
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("17:45:00")), customers.get(4)));
-        tripOverview.addTrip(new Trip(LocalDateTime.of(today, LocalTime.parse("18:15:00")), customers.get(5)));
+        // 2. Combine today's date with the parsed time string for each delivery
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("12:30:00")), customers.get(0)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("14:00:00")), customers.get(1)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("15:00:00")), customers.get(2)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("16:30:00")), customers.get(3)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("17:45:00")), customers.get(4)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("18:15:00")), customers.get(5)));
 
-        return tripOverview;
+        return deliveryOverview;
     }
 
-    private static DriverOverview createDrivers(TripOverview trips) {
+    private static DriverOverview createDrivers(DeliveryOverview deliveries) {
         DriverOverview driverOverview = new DriverOverview();
         //Add drivers
         Driver driver1 = new Driver("Stian", new ImageIcon("assets/stian.jpg").getImage());
@@ -75,23 +75,23 @@ public class Main {
         driverOverview.addDriver(driver3);
 
         //TODO 1: Assigning drivers should either be done automatically by the system or there should be an interactive component that allows manual selection
-        //TODO 2: When registering a trip to the driver, it should automatically update the driver and the trips class. Observer?
-        //Assign drivers to trips
-        trips.getAllTrips().get(0).assignTripToDriver(driver1);
-        trips.getAllTrips().get(1).assignTripToDriver(driver2);
-        trips.getAllTrips().get(2).assignTripToDriver(driver2);
-        trips.getAllTrips().get(3).assignTripToDriver(driver3);
+        //TODO 2: When registering a delivery to the driver, it should automatically update the driver and the deliveries class. Observer?
+        //Assign drivers to deliveries
+        deliveries.getAllDeliveries().get(0).assignTripToDriver(driver1);
+        deliveries.getAllDeliveries().get(1).assignTripToDriver(driver2);
+        deliveries.getAllDeliveries().get(2).assignTripToDriver(driver2);
+        deliveries.getAllDeliveries().get(3).assignTripToDriver(driver3);
 
-        //Add trip to drivers list of trips
-        driver1.addTrip(trips.getAllTrips().get(0));
-        driver2.addTrip(trips.getAllTrips().get(1));
-        driver2.addTrip(trips.getAllTrips().get(2));
-        driver3.addTrip(trips.getAllTrips().get(3));
+        //Add delivery to drivers list of deliveries
+        driver1.addDelivery(deliveries.getAllDeliveries().get(0));
+        driver2.addDelivery(deliveries.getAllDeliveries().get(1));
+        driver2.addDelivery(deliveries.getAllDeliveries().get(2));
+        driver3.addDelivery(deliveries.getAllDeliveries().get(3));
 
         return driverOverview;
     }
 
-    private static void startGUI(TripOverview trips, DriverOverview drivers) {
+    private static void startGUI(DeliveryOverview deliveries, DriverOverview drivers) {
         // Get screen size to determine the appropriate size for the image
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -117,7 +117,7 @@ public class Main {
         MapManager mapManager = new MapManager(mapBounds, mapImage, grid);
         
         // Create the DashboardGUI with the mapManager
-        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, trips, drivers, screenBounds);
+        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, deliveries, drivers, screenBounds);
 
         // Create a JFrame to display the GUI
         JFrame frame = new JFrame("Map and Grid Visualization");

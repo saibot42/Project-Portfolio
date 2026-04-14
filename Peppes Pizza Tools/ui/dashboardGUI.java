@@ -5,27 +5,27 @@ import java.awt.*;
 import java.util.ArrayList;
 import Structures.*;
 import planners.DriverOverview;
-import planners.TripOverview;
+import planners.DeliveryOverview;
 import utils.*;
 
 public class dashboardGUI extends JPanel {
     private MapManager manager;
-    private TripOverview trips;
+    private DeliveryOverview deliveries;
     private DriverOverview drivers;
     private Image mapImage;
-    private ArrayList<Trip> tripList;
+    private ArrayList<Delivery> tripList;
     private ArrayList<Driver> driverList;
     private Rectangle screenBounds;
     private final Color boxColor = new Color(222, 219, 217);
 
-    public dashboardGUI(MapManager manager, TripOverview trips, DriverOverview drivers, Rectangle screeBounds) {
+    public dashboardGUI(MapManager manager, DeliveryOverview deliveries, DriverOverview drivers, Rectangle screeBounds) {
         this.manager = manager;
-        this.trips = trips;
+        this.deliveries = deliveries;
         this.drivers = drivers;
         this.mapImage = manager.getMapImage();
         this.screenBounds = screeBounds;
 
-        this.tripList = trips.getAllTrips();
+        this.tripList = deliveries.getAllDeliveries();
         this.driverList = drivers.getDrivers();
         setLayout(null);
         
@@ -81,7 +81,7 @@ public class dashboardGUI extends JPanel {
         int cellHeight = manager.getPixelGrid().getCellHeight();
 
         // Example list of addresses (replace with actual addresses)
-        for (Trip trip : trips) {
+        for (Delivery trip : deliveries) {
             Pixel pixel = manager.ConvertMapToGrid(trip.getAddress().getMapCoordinate());  // Convert to pixel
             g2d.fillRect(pixel.getX() * cellWidth, pixel.getY() * cellHeight, cellWidth, cellHeight);
         }
@@ -151,14 +151,15 @@ public class dashboardGUI extends JPanel {
             // --- DRAW TRIP(S) SECTION ---
             int tripSectionX = rowX + driverBoxWidth;
 
-            ArrayList<Trip> driverTrips = driver.getTripsForDriver(); // Get all current trips for the driver we are working on
+            ArrayList<Delivery> driverTrips = driver.getDeliveriesForDriver(); // Get all current deliveries for the driver we are working on
             if (driverTrips != null && !driverTrips.isEmpty()) {
                 int numTrips = driverTrips.size();
-                int singleTripHeight = rowHeight / numTrips; // Driver has multiple trips -> divide the row height among them
+                int singleTripHeight = rowHeight / numTrips; // Driver has multiple deliveries -> divide the row height among them
+                int boxTopBuffer = 10; // Buffer / padding -> Used to increase the spaces between trip boxes
 
                 for (int j = 0; j < numTrips; j++) {
-                    Trip trip = driverTrips.get(j);
-                    int currentTripY = rowY + (j * singleTripHeight); // Calculate the Y position for this specific trip
+                    Delivery trip = driverTrips.get(j);
+                    int currentTripY = rowY + (j * singleTripHeight) + boxTopBuffer; // Calculate the Y position for this specific trip
 
                     // -- TRIP BACKROUND BOX -- \\
                     drawRoundedBox(g2d, tripSectionX, currentTripY, tripBoxWidth, singleTripHeight, i, boxColor);
@@ -196,28 +197,28 @@ public class dashboardGUI extends JPanel {
 
                 }
             } else {
-                // Handle edge case where a driver is listed but has no active trips
+                // Handle edge case where a driver is listed but has no active deliveries
                 g2d.setFont(new Font("Arial", Font.ITALIC, 14));
-                g2d.drawString("No active trips", tripSectionX + 15, rowY + 30);
+                g2d.drawString("No active deliveries", tripSectionX + 15, rowY + 30);
             }
 
             //g2d.drawLine(rowX, rowY, remainingWidth, 5); // Draw a line at the bottom of the top and bottow of the driver (bug)
         }
     }
 
-    private ArrayList<ArrayList<Trip>> getDriversTrips() {
-        ArrayList<ArrayList<Trip>> activeTrips = new ArrayList<>();
+    private ArrayList<ArrayList<Delivery>> getDriversTrips() {
+        ArrayList<ArrayList<Delivery>> activeTrips = new ArrayList<>();
         for (Driver driver : driverList) { 
-            activeTrips.add(driver.getTripsForDriver());
+            activeTrips.add(driver.getDeliveriesForDriver());
         }
         return activeTrips;
     } 
 
-    private ArrayList<Trip> generateListofUnassignedTrips() throws Exception {
-        //List of unassigned trips
-        ArrayList<Trip> inActiveTrips = new ArrayList<>();
+    private ArrayList<Delivery> generateListofUnassignedTrips() throws Exception {
+        //List of unassigned deliveries
+        ArrayList<Delivery> inActiveTrips = new ArrayList<>();
         
-        for(Trip trip : tripList) {
+        for(Delivery trip : tripList) {
             if (trip.getDriver() == null) {
                 inActiveTrips.add(trip);
             } else {

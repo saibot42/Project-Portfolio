@@ -9,10 +9,18 @@ public class MapCoordinate {
         this.lon = lon;
     }
 
+    /**
+     * Gets the latitude part of the coordinate, which gives us its vertical position. In order words, North / south
+     * @return double
+     */
     public double getLatitude() {
         return lat;
     }
 
+    /**
+     * Gets the longitude part of the coordinate, which gives us its horizontal position. In order words, West or North
+     * @return double
+     */
     public double getLongitude() {
         return lon;
     }

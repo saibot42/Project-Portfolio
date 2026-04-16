@@ -12,16 +12,20 @@ public class dashboardGUI extends JPanel {
     private MapManager manager;
     private DeliveryOverview deliveries;
     private DriverOverview drivers;
+    private Address pAddress;
+    private Image peppesIcon;
     private Image mapImage;
     private ArrayList<Delivery> tripList;
     private ArrayList<Driver> driverList;
     private Rectangle screenBounds;
     private final Color boxColor = new Color(222, 219, 217);
 
-    public dashboardGUI(MapManager manager, DeliveryOverview deliveries, DriverOverview drivers, Rectangle screeBounds) {
+    public dashboardGUI(MapManager manager, DeliveryOverview deliveries, DriverOverview drivers, Rectangle screeBounds, Address pAddress) {
         this.manager = manager;
         this.deliveries = deliveries;
         this.drivers = drivers;
+        this.pAddress = pAddress;
+        this.peppesIcon = new ImageIcon("assets/peppesIcon.png").getImage();
         this.mapImage = manager.getMapImage();
         this.screenBounds = screeBounds;
 
@@ -80,7 +84,12 @@ public class dashboardGUI extends JPanel {
         int cellWidth = manager.getPixelGrid().getCellWidth();
         int cellHeight = manager.getPixelGrid().getCellHeight();
 
-        // Example list of addresses (replace with actual addresses)
+        //Add Peppes Pizza Restaraunt to the map
+
+        Pixel peppesLocationPixel = manager.ConvertMapToGrid(pAddress.getMapCoordinate());  // Convert to pixel
+        g2d.drawImage(peppesIcon, peppesLocationPixel.getX() * cellWidth, peppesLocationPixel.getY() * cellHeight, cellWidth, cellHeight, null);
+
+        //Add every delivery
         for (Delivery trip : deliveries) {
             Pixel pixel = manager.ConvertMapToGrid(trip.getAddress().getMapCoordinate());  // Convert to pixel
             g2d.fillRect(pixel.getX() * cellWidth, pixel.getY() * cellHeight, cellWidth, cellHeight);

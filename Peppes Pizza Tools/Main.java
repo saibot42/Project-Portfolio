@@ -28,7 +28,7 @@ public class Main {
         DeliveryOverview deliveryOverview = createDeliveries(customers);
         DriverOverview driverOverview = createDrivers(deliveryOverview);
 
-        startGUI(deliveryOverview, driverOverview);
+        startGUI(deliveryOverview, driverOverview, peppesAddress);
 
         //WeightedGraph<V, Integer> graph = createGraph(peppesAddress, customers);
 
@@ -92,7 +92,7 @@ public class Main {
         return driverOverview;
     }
 
-    private static void startGUI(DeliveryOverview deliveries, DriverOverview drivers) {
+    private static void startGUI(DeliveryOverview deliveries, DriverOverview drivers, Address pAddress) {
         // Get screen size to determine the appropriate size for the image
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -118,7 +118,7 @@ public class Main {
         MapManager mapManager = new MapManager(mapBounds, mapImage, grid);
         
         // Create the DashboardGUI with the mapManager
-        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, deliveries, drivers, screenBounds);
+        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, deliveries, drivers, screenBounds, pAddress);
 
         // Create a JFrame to display the GUI
         JFrame frame = new JFrame("Map and Grid Visualization");

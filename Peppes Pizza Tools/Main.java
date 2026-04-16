@@ -125,6 +125,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gd.setFullScreenWindow(frame);
         frame.add(dashboardGUI);
+        frame.validate(); // Force layout recalculation
         frame.setVisible(true);
     }
 

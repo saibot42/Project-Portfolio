@@ -9,7 +9,7 @@ import planners.DeliveryOverview;
 import utils.*;
 
 public class dashboardGUI extends JPanel {
-    private MapManager manager;
+    private MapManager mapManager;
     private DeliveryOverview deliveries;
     private DriverOverview drivers;
     private Address pAddress;
@@ -20,18 +20,32 @@ public class dashboardGUI extends JPanel {
     private Rectangle screenBounds;
     private final Color boxColor = new Color(222, 219, 217);
 
-    public dashboardGUI(MapManager manager, DeliveryOverview deliveries, DriverOverview drivers, Rectangle screeBounds, Address pAddress) {
-        this.manager = manager;
+    public dashboardGUI(MapManager mapManager, DeliveryOverview deliveries, DriverOverview drivers, Rectangle screeBounds, Address pAddress) {
+        this.mapManager = mapManager;
         this.deliveries = deliveries;
         this.drivers = drivers;
         this.pAddress = pAddress;
         this.peppesIcon = new ImageIcon("assets/peppesIcon.png").getImage();
-        this.mapImage = manager.getMapImage();
+        this.mapImage = mapManager.getMapImage();
         this.screenBounds = screeBounds;
 
         this.tripList = deliveries.getAllDeliveries();
         this.driverList = drivers.getDrivers();
-        setLayout(null);
+        setLayout(new BorderLayout());
+
+        // ---  LEFT -> Map Panel --- \\
+        MapPanel mapPanel = new MapPanel(mapManager, deliveries, pAddress);
+        add(mapPanel, BorderLayout.WEST);
+
+        // ---  CENTER -> Cards of Deliveries and Drivers --- \\
+        JPanel contentArea = new JPanel(new CardLayout());
+        contentArea.add(new DriverTripPanel(drivers, screeBounds, mapManager), "DRIVERS");
+        contentArea.add(new DeliveryListPanel(deliveries), "DELIVERIES");
+        add(contentArea, BorderLayout.CENTER);
+
+        // ---  RIGHT -> NARROW SIDEBAR WITH CLOCK AND BUTTON  --- \\
+        SidebarPanel sidebar = new SidebarPanel(contentArea);
+        add(sidebar, BorderLayout.EAST);
         
     }
 
@@ -67,12 +81,12 @@ public class dashboardGUI extends JPanel {
     private void drawGrid(Graphics2D g2d) {
         g2d.setColor(new Color(0, 0, 0, 0)); // Fully transparent
 
-        for (int x = 0; x < manager.getPixelGrid().getGridWidth(); x++) {
-            for (int y = 0; y < manager.getPixelGrid().getGridHeight(); y++) {
-                g2d.drawRect(x * manager.getPixelGrid().getCellWidth(), 
-                           y * manager.getPixelGrid().getCellHeight(),
-                           manager.getPixelGrid().getCellWidth(), 
-                           manager.getPixelGrid().getCellHeight());
+        for (int x = 0; x < mapManager.getPixelGrid().getGridWidth(); x++) {
+            for (int y = 0; y < mapManager.getPixelGrid().getGridHeight(); y++) {
+                g2d.drawRect(x * mapManager.getPixelGrid().getCellWidth(), 
+                           y * mapManager.getPixelGrid().getCellHeight(),
+                           mapManager.getPixelGrid().getCellWidth(), 
+                           mapManager.getPixelGrid().getCellHeight());
             }
         }
     }
@@ -81,17 +95,17 @@ public class dashboardGUI extends JPanel {
     private void highlightDeliveryLocations(Graphics2D g2d) {
         g2d.setColor(Color.RED); // Color for highlights
          // Get the width and height of a grid cell
-        int cellWidth = manager.getPixelGrid().getCellWidth();
-        int cellHeight = manager.getPixelGrid().getCellHeight();
+        int cellWidth = mapManager.getPixelGrid().getCellWidth();
+        int cellHeight = mapManager.getPixelGrid().getCellHeight();
 
         //Add Peppes Pizza Restaraunt to the map
 
-        Pixel peppesLocationPixel = manager.ConvertMapToGrid(pAddress.getMapCoordinate());  // Convert to pixel
+        Pixel peppesLocationPixel = mapManager.ConvertMapToGrid(pAddress.getMapCoordinate());  // Convert to pixel
         g2d.drawImage(peppesIcon, peppesLocationPixel.getX() * cellWidth, peppesLocationPixel.getY() * cellHeight, cellWidth, cellHeight, null);
 
         //Add every delivery
         for (Delivery trip : deliveries) {
-            Pixel pixel = manager.ConvertMapToGrid(trip.getAddress().getMapCoordinate());  // Convert to pixel
+            Pixel pixel = mapManager.ConvertMapToGrid(trip.getAddress().getMapCoordinate());  // Convert to pixel
             g2d.fillRect(pixel.getX() * cellWidth, pixel.getY() * cellHeight, cellWidth, cellHeight);
         }
     }

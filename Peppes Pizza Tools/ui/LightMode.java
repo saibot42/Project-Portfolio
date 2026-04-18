@@ -2,7 +2,7 @@ package ui;
 
 import java.awt.Color;
 
-public class LightTheme implements Theme {
+public class LightMode implements Theme {
     public Color background()        { return new Color(245, 245, 245); }
     public Color cardColor()         { return new Color(255, 255, 255); }
     public Color cardBorderColor()   { return new Color(210, 210, 210); }

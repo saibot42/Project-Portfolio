@@ -14,7 +14,7 @@ import Structures.Delivery;
 import graph.V;
 import graph.WeightedGraph;
 import Structures.Driver;
-import Structures.DriverStatus;
+import Structures.Driver.DriverStatus;
 
 public class DispatchSystem {
     private PriorityQueue<Delivery> deliveryQueue;  
@@ -67,7 +67,7 @@ public class DispatchSystem {
         List<Delivery> added = new ArrayList<>();
 
         for (Delivery candidate : remaining) {
-            int estimatedRouteTime = candidate.calculateTripTime();
+            //int estimatedRouteTime = candidate.calculateTripTime();
 
         }
         
@@ -86,13 +86,14 @@ public class DispatchSystem {
         // The queue is sorted by availability -> peek at the soonest available driver
         Driver driver = driverQueue.poll();
 
+        DriverStatus status = driver.getDriverStatus();
+
         // Only assign if driver is AVAILABLE or COMING_BACK (not already on a trip)
-        if (driver.getDriverStatus() == DriverStatus.Available ||
-            driver.getDriverStatus() == DriverStatus.ComingBack) {
+        if (status == DriverStatus.Available ||
+            status == DriverStatus.ComingBack) {
 
             for (Delivery delivery : cluster)
                 driver.addDelivery(delivery);
-            driver.updateDriverStatus(DriverStatus.OnATrip);
 
             driverQueue.add(driver); // Back of the queue (sorted by availability time)
 

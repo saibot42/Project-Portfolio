@@ -13,22 +13,24 @@ import javax.swing.JPanel;
 import Structures.Address;
 import Structures.Delivery;
 import Structures.Pixel;
+import planners.DeliveryManager;
 import planners.DeliveryOverview;
 import utils.MapManager;
 
 public class MapPanel extends JPanel {
     private MapManager mapManager;
-    private DeliveryOverview deliveries;
+    private DeliveryManager deliveryManager;
     private Address pAddress;
     private Image peppesIcon;
     private Image mapImage;
 
-    public MapPanel(MapManager mapManager, DeliveryOverview deliveries, Address pAddress) {
+    public MapPanel(MapManager mapManager, DeliveryManager deliveryManager, Address pAddress) {
         this.mapManager = mapManager;
-        this.deliveries = deliveries;
+        this.deliveryManager = deliveryManager;
         this.pAddress = pAddress;
         this.mapImage = mapManager.getMapImage();
         this.peppesIcon = new ImageIcon("assets/peppesIcon.png").getImage();
+        setBackground(dashboardGUI.theme.background());
         
 
         // // Lock the size so BorderLayout.WEST doesn't squish it
@@ -57,7 +59,7 @@ public class MapPanel extends JPanel {
 
     // Draw the grid cells
     private void drawGrid(Graphics2D g2d) {
-        g2d.setColor(new Color(0, 0, 0, 0)); // Fully transparent
+        g2d.setColor(dashboardGUI.theme.transparentColor()); // Fully transparent
 
         for (int x = 0; x < mapManager.getPixelGrid().getGridWidth(); x++) {
             for (int y = 0; y < mapManager.getPixelGrid().getGridHeight(); y++) {
@@ -82,8 +84,19 @@ public class MapPanel extends JPanel {
         g2d.drawImage(peppesIcon, peppesLocationPixel.getX() * cellWidth, peppesLocationPixel.getY() * cellHeight, cellWidth, cellHeight, null);
 
         //Add every delivery
-        for (Delivery trip : deliveries) {
-            Pixel pixel = mapManager.ConvertMapToGrid(trip.getAddress().getMapCoordinate());  // Convert to pixel
+        for (Delivery delivery : deliveryManager.getPendingDeliveries()) {
+            Pixel pixel = mapManager.ConvertMapToGrid(delivery.getAddress().getMapCoordinate());  // Convert to pixel
+            switch (delivery.getStatus()) {
+                case ON_TIME:
+                    g2d.setColor(dashboardGUI.theme.onTimeColor());
+                    break;
+                case WARNING:
+                    g2d.setColor(dashboardGUI.theme.warningColor());
+                case LATE:
+                    g2d.setColor(dashboardGUI.theme.lateColor());
+                default:
+                    break;
+            }
             g2d.fillRect(pixel.getX() * cellWidth, pixel.getY() * cellHeight, cellWidth, cellHeight);
         }
     }

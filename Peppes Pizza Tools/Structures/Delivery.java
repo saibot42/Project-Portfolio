@@ -21,6 +21,18 @@ public class Delivery {
         this.customer = customer;
     }
 
+    public enum DeliveryStatus {
+        ON_TIME,
+        WARNING,
+        LATE
+    }
+
+    public DeliveryStatus getStatus() {
+        int mins = minutesLeft();
+        if (mins <= 0)  return DeliveryStatus.LATE;
+        if (mins <= 15) return DeliveryStatus.WARNING;
+        return DeliveryStatus.ON_TIME;
+    }
     /**
      * Calculates how many minutes there are left before the trip is considered "late".
      * 
@@ -57,16 +69,12 @@ public class Delivery {
         this.driver = driver;
     }
 
-    public Driver getDriver() throws Exception {
-        if (driver != null) {
-            return driver;
-        } else {
-            throw new Exception("There is no driver assigned to this trip");
-        }
+    public Driver getDriver() {
+        return driver;
     }
 
     public Integer calculateTripTime(ArrayList<Delivery> cluster) {
-        WeightedGraph<V, Integer> clusterGraph = new Graph()
+        WeightedGraph<V, Integer> clusterGraph = new WeightedGraph<>();
         WeightedGraph<V, Integer> graph = new WeightedGraph<>();;
         
         return 0;

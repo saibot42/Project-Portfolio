@@ -15,6 +15,7 @@ import graph.WeightedGraph;
 import planners.Clustering;
 import planners.DriverOverview;
 import planners.DeliveryOverview;
+import planners.DeliveryManager;
 import planners.calculateDistances;
 import planners.Clustering;
 import utils.MapManager;
@@ -27,8 +28,9 @@ public class Main {
         ArrayList<Customer> customers = createCustomers();
         DeliveryOverview deliveryOverview = createDeliveries(customers);
         DriverOverview driverOverview = createDrivers(deliveryOverview);
+        DeliveryManager deliveryManager = createDeliveryManager(deliveryOverview, driverOverview);
 
-        startGUI(deliveryOverview, driverOverview, peppesAddress);
+        startGUI(deliveryManager, peppesAddress);
 
         //WeightedGraph<V, Integer> graph = createGraph(peppesAddress, customers);
 
@@ -65,34 +67,30 @@ public class Main {
 
     private static DriverOverview createDrivers(DeliveryOverview deliveries) {
         DriverOverview driverOverview = new DriverOverview();
-        ArrayList<Delivery> deliveryList = deliveries.getAllDeliveries();
         //Add drivers
-        Driver driver1 = new Driver("Stian", new ImageIcon("assets/stian.jpg").getImage());
-        Driver driver2 = new Driver("Nocco", new ImageIcon("assets/nicho.jpg").getImage());
-        Driver driver3 = new Driver("Regine", new ImageIcon("assets/regina.jpg").getImage());
-
-        driverOverview.addDriver(driver1);
-        driverOverview.addDriver(driver2);
-        driverOverview.addDriver(driver3);
-
-        //TODO 1: Assigning drivers should either be done automatically by the system or there should be an interactive component that allows manual selection
-        //TODO 2: When registering a delivery to the driver, it should automatically update the driver and the deliveries class. Observer?
-        //Assign drivers to deliveries
-        deliveryList.get(0).assignTripToDriver(driver1);
-        deliveryList.get(1).assignTripToDriver(driver2);
-        deliveryList.get(2).assignTripToDriver(driver2);
-        deliveryList.get(3).assignTripToDriver(driver3);
-
-        //Add delivery to drivers list of deliveries
-        driver1.addDelivery(deliveryList.get(0));
-        driver2.addDelivery(deliveryList.get(1));
-        driver2.addDelivery(deliveryList.get(2));
-        driver3.addDelivery(deliveryList.get(3));
+        driverOverview.addDriver(new Driver("Stian", "assets/stian.jpg"));
+        //driverOverview.addDriver(new Driver("Nocco", new ImageIcon("assets/nicho.jpg").getImage()));
+        driverOverview.addDriver(new Driver("Jacob", "assets/jacob.jpg"));
+        driverOverview.addDriver(new Driver("Regine", "assets/regina.jpg"));
 
         return driverOverview;
     }
 
-    private static void startGUI(DeliveryOverview deliveries, DriverOverview drivers, Address pAddress) {
+    private static DeliveryManager createDeliveryManager(DeliveryOverview deliveryOverview, DriverOverview driverOverview) {
+        DeliveryManager deliveryManager = new DeliveryManager(deliveryOverview, driverOverview);
+        
+        // All assignments go through the Manager — single call, both sides updated
+        ArrayList<Delivery> deliveryList = deliveryOverview.getAllDeliveries();
+        ArrayList<Driver> driverList = driverOverview.getDrivers();
+        deliveryManager.assignDeliveryToDriver(deliveryList.get(0), driverList.get(0));
+        deliveryManager.assignDeliveryToDriver(deliveryList.get(1), driverList.get(1));
+        deliveryManager.assignDeliveryToDriver(deliveryList.get(2), driverList.get(1));
+        deliveryManager.assignDeliveryToDriver(deliveryList.get(3), driverList.get(2));
+
+        return deliveryManager;
+    }
+
+    private static void startGUI(DeliveryManager deliveryManager, Address pAddress) {
         // Get screen size to determine the appropriate size for the image
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -118,7 +116,7 @@ public class Main {
         MapManager mapManager = new MapManager(mapBounds, mapImage, grid);
         
         // Create the DashboardGUI with the mapManager
-        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, deliveries, drivers, screenBounds, pAddress);
+        dashboardGUI dashboardGUI = new dashboardGUI(mapManager, deliveryManager, screenBounds, pAddress);
 
         // Create a JFrame to display the GUI
         JFrame frame = new JFrame("Map and Grid Visualization");

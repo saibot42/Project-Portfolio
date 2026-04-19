@@ -1,11 +1,13 @@
 package ui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -71,33 +73,50 @@ public class MapPanel extends JPanel {
         }
     }
 
-    // Highlight delivery locations
     private void highlightDeliveryLocations(Graphics2D g2d) {
-        g2d.setColor(Color.RED); // Color for highlights
-         // Get the width and height of a grid cell
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         int cellWidth = mapManager.getPixelGrid().getCellWidth();
         int cellHeight = mapManager.getPixelGrid().getCellHeight();
+        
+        //Guards -> If dimensions arent ready yet 
+        if (cellWidth <= 0 || cellHeight <= 0) return;
+        if (mapImage.getWidth(null) <= 0) return;
 
-        //Add Peppes Pizza Restaraunt to the map
-        //TODO: Icon fills just the pixel and scaling up will only offsett the actual location -> need to find fix
-        Pixel peppesLocationPixel = mapManager.ConvertMapToGrid(pAddress.getMapCoordinate());  // Convert to pixel
-        g2d.drawImage(peppesIcon, peppesLocationPixel.getX() * cellWidth, peppesLocationPixel.getY() * cellHeight, cellWidth, cellHeight, null);
+        // --- RESTAURANT ICON ---
+        int iconSize = cellWidth * 12; // 3x bigger than a cell
+        Pixel peppesPixel = mapManager.ConvertMapToGrid(pAddress.getMapCoordinate());
 
-        //Add every delivery
+        // Center the icon on the pixel rather than top-left aligning it
+        int iconX = (peppesPixel.getX() * cellWidth) + (cellWidth / 2) - (iconSize / 2);
+        int iconY = (peppesPixel.getY() * cellHeight) + (cellHeight / 2) - (iconSize / 2);
+        g2d.drawImage(peppesIcon, iconX, iconY, iconSize, iconSize, null);
+
+        // --- DELIVERY DOTS ---
+        int dotSize = cellWidth * 3; // Bigger than a cell, adjust to taste
+
         for (Delivery delivery : deliveryManager.getPendingDeliveries()) {
-            Pixel pixel = mapManager.ConvertMapToGrid(delivery.getAddress().getMapCoordinate());  // Convert to pixel
+            Pixel pixel = mapManager.ConvertMapToGrid(delivery.getAddress().getMapCoordinate());
+
+            // Center point of this cell
+            int cx = (pixel.getX() * cellWidth) + (cellWidth / 2);
+            int cy = (pixel.getY() * cellHeight) + (cellHeight / 2);
+
+            // Draw colored filled circle centered on the location
             switch (delivery.getStatus()) {
-                case ON_TIME:
-                    g2d.setColor(dashboardGUI.theme.onTimeColor());
-                    break;
-                case WARNING:
-                    g2d.setColor(dashboardGUI.theme.warningColor());
-                case LATE:
-                    g2d.setColor(dashboardGUI.theme.lateColor());
-                default:
-                    break;
+                case ON_TIME: g2d.setColor(dashboardGUI.theme.onTimeTextColor());  break;
+                case WARNING: g2d.setColor(dashboardGUI.theme.warningTextColor()); break;
+                case LATE:    g2d.setColor(dashboardGUI.theme.lateTextColor());    break;
+                default:      g2d.setColor(dashboardGUI.theme.primaryTextColor()); break;
             }
-            g2d.fillRect(pixel.getX() * cellWidth, pixel.getY() * cellHeight, cellWidth, cellHeight);
+
+            // fillOval centered on cx, cy
+            g2d.fillOval(cx - (dotSize / 2), cy - (dotSize / 2), dotSize, dotSize);
+
+            // Subtle dark border around the dot so it's visible on any map color
+            g2d.setColor(new Color(0, 0, 0, 120));
+            g2d.setStroke(new BasicStroke(1.5f));
+            g2d.drawOval(cx - (dotSize / 2), cy - (dotSize / 2), dotSize, dotSize);
         }
     }
 }

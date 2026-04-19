@@ -121,10 +121,11 @@ public class Main {
         // Create a JFrame to display the GUI
         JFrame frame = new JFrame("Map and Grid Visualization");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gd.setFullScreenWindow(frame);
         frame.add(dashboardGUI);
         frame.validate(); // Force layout recalculation
         frame.setVisible(true);
+        gd.setFullScreenWindow(frame);
+        //SwingUtilities.invokeLater(() -> dashboardGUI.repaint());
     }
 
     private static WeightedGraph<V, Integer> createGraph(Address peppesAddress, ArrayList<Customer> customers) {

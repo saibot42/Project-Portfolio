@@ -89,8 +89,8 @@ public class DispatchSystem {
         DriverStatus status = driver.getDriverStatus();
 
         // Only assign if driver is AVAILABLE or COMING_BACK (not already on a trip)
-        if (status == DriverStatus.Available ||
-            status == DriverStatus.ComingBack) {
+        if (status == DriverStatus.AVAILABLE ||
+            status == DriverStatus.COMING_BACK) {
 
             for (Delivery delivery : cluster)
                 driver.addDelivery(delivery);

@@ -1,4 +1,4 @@
-package ui;
+package ui.Panels;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -7,60 +7,98 @@ import Structures.Delivery;
 import Structures.Delivery.DeliveryStatus;
 import Structures.Driver;
 import planners.DeliveryManager;
+import ui.dashboardGUI;
+import ui.Themes.ThemedComponent;
 
-public class DeliveryListPanel extends JPanel {
+public class DeliveryListPanel extends JPanel implements ThemedComponent {
     private DeliveryManager deliveryManager;
     private JList<Delivery> inTransitList;
     private JList<Delivery> pendingList;
+    private JPanel container;
+    private JLabel transitHeader;
+    private JLabel pendingHeader;
+    private JScrollPane transitScroll;
+    private JScrollPane pendingScroll;
 
     public DeliveryListPanel(DeliveryManager deliveryManager) {
         this.deliveryManager = deliveryManager;
         setLayout(new BorderLayout());
-        setBackground(dashboardGUI.theme.background());
+
+        // Register for theme updates
+        dashboardGUI.addThemeListener(evt -> applyTheme());
 
         inTransitList = new JList<>();
         inTransitList.setCellRenderer(new DeliveryCardRenderer());
         inTransitList.setFixedCellHeight(80);
-        inTransitList.setBackground(dashboardGUI.theme.background());
 
         pendingList = new JList<>();
         pendingList.setCellRenderer(new DeliveryCardRenderer());
         pendingList.setFixedCellHeight(80);
-        pendingList.setBackground(dashboardGUI.theme.background());
 
-        JPanel container = new JPanel();
+        container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBackground(dashboardGUI.theme.background());
-        container.add(createSectionHeader("In Transit"));
-        container.add(createScrollPane(inTransitList));
+
+        transitHeader = createSectionHeader("In Transit");
+        pendingHeader = createSectionHeader("Waiting");
+        transitScroll = createScrollPane(inTransitList);
+        pendingScroll = createScrollPane(pendingList);
+
+        container.add(transitHeader);
+        container.add(transitScroll);
         container.add(Box.createVerticalStrut(8));
-        container.add(createSectionHeader("Waiting"));
-        container.add(createScrollPane(pendingList));
+        container.add(pendingHeader);
+        container.add(pendingScroll);
 
         add(container, BorderLayout.CENTER);
+        
+        applyTheme();
         refresh();
+    }
+
+    @Override
+    public void applyTheme() {
+        Color bg = dashboardGUI.theme.background();
+        Color text = dashboardGUI.theme.primaryTextColor();
+
+        setBackground(bg);
+        container.setBackground(bg);
+
+        // Update Lists
+        inTransitList.setBackground(bg);
+        pendingList.setBackground(bg);
+
+        // Update Headers
+        transitHeader.setForeground(text);
+        pendingHeader.setForeground(text);
+
+        // Update ScrollPanes
+        updateScrollStyle(transitScroll);
+        updateScrollStyle(pendingScroll);
+
+        revalidate();
+        repaint();
+    }
+
+    private void updateScrollStyle(JScrollPane scrollPane) {
+        Color bg = dashboardGUI.theme.background();
+        scrollPane.setBackground(bg);
+        scrollPane.getViewport().setBackground(bg);
+        scrollPane.getVerticalScrollBar().setBackground(bg);
+        // Force scrollbar UI to refresh its internal colors
+        scrollPane.getVerticalScrollBar().repaint();
     }
 
     private JScrollPane createScrollPane(JList<Delivery> list) {
         JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setBackground(dashboardGUI.theme.background());
-        scrollPane.getViewport().setBackground(dashboardGUI.theme.background());
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getVerticalScrollBar().setBackground(dashboardGUI.theme.background());
         scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
                 thumbColor = dashboardGUI.theme.cardColor();
                 trackColor = dashboardGUI.theme.background();
             }
-            @Override
-            protected JButton createDecreaseButton(int orientation) {
-                return createZeroButton();
-            }
-            @Override
-            protected JButton createIncreaseButton(int orientation) {
-                return createZeroButton();
-            }
+            @Override protected JButton createDecreaseButton(int orientation) { return createZeroButton(); }
+            @Override protected JButton createIncreaseButton(int orientation) { return createZeroButton(); }
             private JButton createZeroButton() {
                 JButton btn = new JButton();
                 btn.setPreferredSize(new Dimension(0, 0));
@@ -73,7 +111,6 @@ public class DeliveryListPanel extends JPanel {
     private JLabel createSectionHeader(String text) {
         JLabel label = new JLabel(text.toUpperCase());
         label.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 25));
-        label.setForeground(dashboardGUI.theme.primaryTextColor());
         label.setBorder(BorderFactory.createEmptyBorder(16, 0, 8, 0));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
@@ -117,12 +154,10 @@ public class DeliveryListPanel extends JPanel {
             DeliveryStatus status = delivery.getStatus();
             int mins = delivery.minutesLeft();
 
-            // Outer wrapper — controls spacing between cards and left/right margin
             JPanel wrapper = new JPanel(new BorderLayout());
             wrapper.setOpaque(false);
             wrapper.setBorder(BorderFactory.createEmptyBorder(4, 20, 4, 20));
 
-            // Inner card — custom painted with rounded corners
             JPanel card = new JPanel(new BorderLayout(12, 0)) {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -130,7 +165,7 @@ public class DeliveryListPanel extends JPanel {
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g2.setColor(dashboardGUI.theme.cardColor());
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                    g2.setColor(dashboardGUI.theme.cardColor());
+                    g2.setColor(dashboardGUI.theme.cardBorderColor());
                     g2.setStroke(new BasicStroke(1f));
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                     g2.dispose();
@@ -139,7 +174,7 @@ public class DeliveryListPanel extends JPanel {
             card.setOpaque(false);
             card.setBorder(BorderFactory.createEmptyBorder(8, 14, 8, 14));
 
-            // Left: status dot
+            // Dot
             JPanel dot = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -158,7 +193,7 @@ public class DeliveryListPanel extends JPanel {
             dotWrapper.add(dot);
             card.add(dotWrapper, BorderLayout.WEST);
 
-            // Center: address + driver
+            // Text
             JPanel center = new JPanel();
             center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
             center.setOpaque(false);
@@ -177,7 +212,7 @@ public class DeliveryListPanel extends JPanel {
             center.add(driverLabel);
             card.add(center, BorderLayout.CENTER);
 
-            // Right: rounded time badge
+            // Badge
             String badgeText = mins > 0 ? mins + " min left" : Math.abs(mins) + " min late";
             JLabel badge = new JLabel(badgeText, SwingConstants.CENTER) {
                 @Override

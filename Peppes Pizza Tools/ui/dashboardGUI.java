@@ -4,10 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import Structures.*;
 import planners.DeliveryManager;
+import ui.Panels.DeliveryListPanel;
+import ui.Panels.DriverTripPanel;
+import ui.Panels.MapPanel;
+import ui.Panels.SidebarPanel;
+import ui.Themes.DarkMode;
+import ui.Themes.Theme;
 import utils.*;
 
 public class dashboardGUI extends JPanel {
     public static Theme theme = new DarkMode(); // Default to dark
+    private static final java.beans.PropertyChangeSupport support = new java.beans.PropertyChangeSupport(dashboardGUI.class);
     private MapPanel mapPanel;
     private DriverTripPanel driverTripPanel;
     private DeliveryListPanel deliveryListPanel;
@@ -36,7 +43,18 @@ public class dashboardGUI extends JPanel {
     }
 
     public static void setTheme(Theme newTheme) {
+        Theme oldTheme = theme;
         theme = newTheme;
+        // Notify anyone listening that "theme" has changed
+        support.firePropertyChange("theme", oldTheme, newTheme);
+    }
+
+    public static void addThemeListener(java.beans.PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public static void removeThemeListener(java.beans.PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
     }
 
     private void startDynamicUpdates() {

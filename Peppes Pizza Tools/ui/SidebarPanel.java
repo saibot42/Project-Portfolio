@@ -16,7 +16,49 @@ public class SidebarPanel extends JPanel {
         setBackground(dashboardGUI.theme.sidebarColor());
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        // TOP: Logo
+        drawLogo();
+        add(Box.createVerticalStrut(16));
+        add(createDivider());
+
+        add(Box.createVerticalGlue());
+        addToggleButton(contentArea);
+
+        add(Box.createVerticalGlue());
+        addSettingsButton();
+
+        add(createDivider());
+        add(Box.createVerticalStrut(16));
+        addClock();
+    }
+
+    // Shared helper — paints the rounded card background and border for any button
+    private void paintButtonBackground(Graphics2D g2, int width, int height, boolean hovered) {
+        g2.setColor(hovered ? dashboardGUI.theme.cardBorderColor() : dashboardGUI.theme.cardColor());
+        g2.fillRoundRect(0, 0, width, height, 14, 14);
+        g2.setColor(dashboardGUI.theme.cardBorderColor());
+        g2.setStroke(new BasicStroke(1f));
+        g2.drawRoundRect(0, 0, width - 1, height - 1, 14, 14);
+    }
+
+    private void applyButtonStyle(JButton btn) {
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn.setMaximumSize(new Dimension(sidebarWidth - 16, 56));
+        btn.setPreferredSize(new Dimension(sidebarWidth - 16, 56));
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    private Component createDivider() {
+        JPanel divider = new JPanel();
+        divider.setMaximumSize(new Dimension(sidebarWidth - 16, 1));
+        divider.setPreferredSize(new Dimension(sidebarWidth - 16, 1));
+        divider.setBackground(dashboardGUI.theme.subtleBorderColor());
+        divider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return divider;
+    }
+
+    private void drawLogo() {
         ImageIcon scaledIcon = new ImageIcon(
             peppesIcon.getImage().getScaledInstance(sidebarWidth - 20, sidebarWidth - 20, Image.SCALE_SMOOTH)
         );
@@ -24,16 +66,11 @@ public class SidebarPanel extends JPanel {
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(Box.createVerticalStrut(20));
         add(iconLabel);
-        add(Box.createVerticalStrut(16));
-        add(createDivider());
+    }
 
-        // Spring pushes button to middle
-        add(Box.createVerticalGlue());
-
-        // MIDDLE: Custom painted toggle button
-        JButton toggleBtn = new JButton() {
-            private boolean hovered = false;
-
+    private void addToggleButton(JPanel contentArea) {
+        JButton btn = new JButton() {
+            boolean hovered = false;
             {
                 addMouseListener(new MouseAdapter() {
                     @Override public void mouseEntered(MouseEvent e) { hovered = true; repaint(); }
@@ -46,69 +83,90 @@ public class SidebarPanel extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Background
-                g2.setColor(hovered
-                    ? dashboardGUI.theme.cardBorderColor()
-                    : dashboardGUI.theme.cardColor());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-
-                // Border
-                g2.setColor(dashboardGUI.theme.cardBorderColor());
-                g2.setStroke(new BasicStroke(1f));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+                //paintButtonBackground(g2, getWidth(), getHeight(), hovered);
 
                 // Switch icon
                 int cx = getWidth() / 2;
                 int cy = getHeight() / 2;
                 g2.setColor(dashboardGUI.theme.primaryTextColor());
                 g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-
-                // Top line with right arrow
-                g2.drawLine(cx - 12, cy - 6, cx + 12, cy - 6);
+                g2.drawLine(cx - 12, cy - 6,  cx + 12, cy - 6);
                 g2.drawLine(cx + 8,  cy - 10, cx + 12, cy - 6);
                 g2.drawLine(cx + 8,  cy - 2,  cx + 12, cy - 6);
-
-                // Bottom line with left arrow
-                g2.drawLine(cx - 12, cy + 6, cx + 12, cy + 6);
+                g2.drawLine(cx - 12, cy + 6,  cx + 12, cy + 6);
                 g2.drawLine(cx - 8,  cy + 2,  cx - 12, cy + 6);
                 g2.drawLine(cx - 8,  cy + 10, cx - 12, cy + 6);
 
                 g2.dispose();
             }
 
-            @Override
-            protected void paintBorder(Graphics g) {
-                // Suppressed — we paint our own
-            }
+            @Override protected void paintBorder(Graphics g) {}
         };
 
-        toggleBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        toggleBtn.setMaximumSize(new Dimension(sidebarWidth - 16, 56));
-        toggleBtn.setPreferredSize(new Dimension(sidebarWidth - 16, 56));
-        toggleBtn.setContentAreaFilled(false);
-        toggleBtn.setFocusPainted(false);
-        toggleBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        toggleBtn.addActionListener(e -> {
+        applyButtonStyle(btn);
+        btn.addActionListener(e -> {
             CardLayout cl = (CardLayout) contentArea.getLayout();
             cl.next(contentArea);
         });
-        add(toggleBtn);
+        add(btn);
+    }
 
-        // Spring pushes clock to bottom
-        add(Box.createVerticalGlue());
+    private void addSettingsButton() {
+        JButton btn = new JButton() {
+            boolean hovered = false;
+            {
+                addMouseListener(new MouseAdapter() {
+                    @Override public void mouseEntered(MouseEvent e) { hovered = true; repaint(); }
+                    @Override public void mouseExited(MouseEvent e)  { hovered = false; repaint(); }
+                });
+            }
 
-        // Divider above clock
-        add(createDivider());
-        add(Box.createVerticalStrut(16));
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // BOTTOM: Clock
+                //paintButtonBackground(g2, getWidth(), getHeight(), hovered);
+
+                // Gear icon
+                int cx = getWidth() / 2;
+                int cy = getHeight() / 2;
+                int outerR = 10;
+                int innerR = 6;
+                g2.setColor(dashboardGUI.theme.primaryTextColor());
+                g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2.drawOval(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
+                for (int i = 0; i < 8; i++) {
+                    double angle = Math.toRadians(i * 45.0);
+                    int x1 = (int)(cx + innerR * Math.cos(angle));
+                    int y1 = (int)(cy + innerR * Math.sin(angle));
+                    int x2 = (int)(cx + outerR * Math.cos(angle));
+                    int y2 = (int)(cy + outerR * Math.sin(angle));
+                    g2.drawLine(x1, y1, x2, y2);
+                }
+
+                g2.dispose();
+            }
+
+            @Override protected void paintBorder(Graphics g) {}
+        };
+
+        applyButtonStyle(btn);
+        btn.addActionListener(e ->
+            SettingsPanel.open(SwingUtilities.getWindowAncestor(this))
+        );
+        add(Box.createVerticalStrut(8));
+        add(btn);
+        add(Box.createVerticalStrut(8));
+    }
+
+    private void addClock() {
         clockLabel = new JLabel("00:00");
         clockLabel.setForeground(dashboardGUI.theme.primaryTextColor());
         clockLabel.setFont(new Font("Arial", Font.BOLD, 26));
         clockLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(clockLabel);
 
-        // Date
         JLabel dateLabel = new JLabel(
             java.time.LocalDate.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("dd MMM"))
@@ -120,21 +178,11 @@ public class SidebarPanel extends JPanel {
         add(dateLabel);
         add(Box.createVerticalStrut(20));
 
-        // Timer
         new Timer(1000, e -> {
             clockLabel.setText(
                 java.time.LocalTime.now()
                     .format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
             );
         }).start();
-    }
-
-    private Component createDivider() {
-        JPanel divider = new JPanel();
-        divider.setMaximumSize(new Dimension(sidebarWidth - 16, 1));
-        divider.setPreferredSize(new Dimension(sidebarWidth - 16, 1));
-        divider.setBackground(dashboardGUI.theme.subtleBorderColor());
-        divider.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return divider;
     }
 }

@@ -6,7 +6,7 @@
             "name": "Run Main",
             "request": "launch",
             "mainClass": "Main",
-            "vmArgs": "-Xms256m -Xmx512m -Dsun.java2d.opengl=true"
+            "noDebug": true
         }
     ]
 }

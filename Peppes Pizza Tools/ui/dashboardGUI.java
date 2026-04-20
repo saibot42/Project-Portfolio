@@ -14,12 +14,15 @@ import utils.*;
 
 public class dashboardGUI extends JPanel {
     public static Theme theme = new DarkMode(); // Default to dark
-    private static final java.beans.PropertyChangeSupport support = new java.beans.PropertyChangeSupport(dashboardGUI.class);
+    private static final java.beans.PropertyChangeSupport themeSupport = new java.beans.PropertyChangeSupport(dashboardGUI.class);
+    private static final java.beans.PropertyChangeSupport langSupport = new java.beans.PropertyChangeSupport(dashboardGUI.class);
+
+    
     private MapPanel mapPanel;
     private DriverTripPanel driverTripPanel;
     private DeliveryListPanel deliveryListPanel;
     private JPanel contentArea; // Store as field
-    public static final String fontName = "Roboto";
+    public static final String fontName = "Inter";
 
     public dashboardGUI(MapManager mapManager, DeliveryManager deliveryManager, Rectangle screenBounds, Address pAddress) {
         setLayout(new BorderLayout());
@@ -42,19 +45,33 @@ public class dashboardGUI extends JPanel {
         startDynamicUpdates();
     }
 
+    public static void setLanguage(LanguageManager.Language lang) {
+        LanguageManager.Language old = LanguageManager.getLanguage();
+        LanguageManager.setLanguage(lang);
+        langSupport.firePropertyChange("language", old, lang);
+    }
+
+    public static void addLanguageListener(java.beans.PropertyChangeListener listener) {
+        langSupport.addPropertyChangeListener(listener);
+    }
+
+    public static void removeLanguageListener(java.beans.PropertyChangeListener listener) {
+        langSupport.removePropertyChangeListener(listener);
+    }
+
     public static void setTheme(Theme newTheme) {
         Theme oldTheme = theme;
         theme = newTheme;
         // Notify anyone listening that "theme" has changed
-        support.firePropertyChange("theme", oldTheme, newTheme);
+        themeSupport.firePropertyChange("theme", oldTheme, newTheme);
     }
 
     public static void addThemeListener(java.beans.PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
+        themeSupport.addPropertyChangeListener(listener);
     }
 
     public static void removeThemeListener(java.beans.PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
+        themeSupport.removePropertyChangeListener(listener);
     }
 
     private void startDynamicUpdates() {

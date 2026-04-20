@@ -12,15 +12,14 @@ import planners.DeliveryManager;
 import planners.DriverOverview;
 import ui.dashboardGUI;
 import ui.Themes.ThemedComponent;
+import utils.LanguageManager;
 
 public class DriverTripPanel extends JPanel implements ThemedComponent {
-    private DeliveryManager deliveryManager;
     private DriverOverview drivers;
     private ArrayList<Driver> driverList;
     private Rectangle screenBounds;
 
     public DriverTripPanel(DeliveryManager deliveryManager, Rectangle screenBounds) {
-        this.deliveryManager = deliveryManager;
         this.drivers = deliveryManager.getDriverOverview();
         this.driverList = drivers.getDrivers();
         this.screenBounds = screenBounds;
@@ -33,9 +32,7 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
 
     @Override
     public void applyTheme() {
-        // Update the basic panel properties
         setBackground(dashboardGUI.theme.background());
-        // Since this panel is custom-painted, a repaint is all it needs to see the new colors
         repaint();
     }
 
@@ -45,10 +42,10 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        drawDriverandTripOverview(g2d);
+        drawDriverAndDeliveryOverview(g2d);
     }
 
-    private void drawDriverandTripOverview(Graphics2D g2d) {
+    private void drawDriverAndDeliveryOverview(Graphics2D g2d) {
         if (driverList == null || driverList.isEmpty()) return;
 
         int panelWidth = getWidth();
@@ -63,128 +60,199 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
             int rowX = 0;
             int rowY = i * rowHeight;
 
-            // --- DRIVER SECTION ---
-            Image driverImage = driver.getDriverPicture();
-            if (driverImage != null) {
-                int imgWidth = driverImage.getWidth(null);
-                int imgHeight = driverImage.getHeight(null);
+            // ---- Draw Driver Image ---- \\
+            int imageBottomY = drawDriverImage(g2d, driver, rowX, rowY, driverBoxWidth, rowHeight);
 
-                int imgX = rowX + ((driverBoxWidth - imgWidth) / 2);
-                int imgY = rowY + ((rowHeight - imgHeight) / 2) - 15;
+            // ---- Draw Name Badge ---- \\
+            drawNameBadge(g2d, driver, rowX, imageBottomY, driverBoxWidth);
 
-                drawRoundedImage(g2d, driverImage, imgX, imgY, imgWidth, imgHeight, 30);
-
-                // Name box beneath image
-                int nameBoxY = imgY + imgHeight + 8;
-                int nameBoxWidth = driverBoxWidth / 2;
-                int nameBoxHeight = (rowY + rowHeight) - nameBoxY - 12;
-                int nameBoxX = imgX + ((imgWidth - nameBoxWidth) / 2);
-                drawRoundedBox(g2d, nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, dashboardGUI.theme.cardColor());
-
-                // Measure text
-                g2d.setFont(new Font("Arial", Font.BOLD, 22));
-                FontMetrics nameMetrics = g2d.getFontMetrics();
-                String driverName = driver.getName();
-
-                g2d.setFont(new Font("Arial", Font.PLAIN, 13));
-                FontMetrics statusMetrics = g2d.getFontMetrics();
-                DriverStatus status = driver.getDriverStatus();
-                String statusString = status.toString();
-
-                int gap = 6; 
-                int totalTextHeight = nameMetrics.getHeight() + gap + statusMetrics.getHeight();
-                int blockStartY = nameBoxY + ((nameBoxHeight - totalTextHeight) / 2);
-
-                // Draw name
-                int nameX = rowX + ((driverBoxWidth - nameMetrics.stringWidth(driverName)) / 2);
-                int nameY = blockStartY + nameMetrics.getAscent();
-                g2d.setFont(new Font("Arial", Font.BOLD, 22));
-                g2d.setColor(dashboardGUI.theme.primaryTextColor());
-                g2d.drawString(driverName, nameX, nameY);
-
-                // Draw status with Dynamic Colors
-                int statusX = rowX + ((driverBoxWidth - statusMetrics.stringWidth(statusString)) / 2);
-                int statusY = nameY + nameMetrics.getDescent() + gap + statusMetrics.getAscent();
-                g2d.setFont(new Font("Arial", Font.PLAIN, 13));
-                
-                switch (status) {
-                    case AVAILABLE -> g2d.setColor(dashboardGUI.theme.onTimeTextColor());
-                    case ON_TRIP -> g2d.setColor(dashboardGUI.theme.lateTextColor());
-                    case COMING_BACK, ON_BREAK -> g2d.setColor(dashboardGUI.theme.warningTextColor());
-                    default -> g2d.setColor(dashboardGUI.theme.primaryTextColor());
-                }
-                g2d.drawString(statusString, statusX, statusY);
-            }
-
-            // --- TRIP(S) SECTION ---
-            int tripSectionX = driverBoxWidth;
-            ArrayList<Delivery> driverTrips = driver.getDeliveriesForDriver();
-            
-            if (driverTrips != null && !driverTrips.isEmpty()) {
-                int numTrips = driverTrips.size();
-                int singleTripHeight = rowHeight / numTrips;
-
-                for (int j = 0; j < numTrips; j++) {
-                    Delivery trip = driverTrips.get(j);
-                    int currentTripY = rowY + (j * singleTripHeight);
-
-                    int gapX = 16;
-                    int gapY = 10;
-                    drawRoundedBox(g2d,
-                        tripSectionX + gapX,
-                        currentTripY + gapY,
-                        tripBoxWidth - (gapX * 2),
-                        singleTripHeight - (gapY * 2),
-                        dashboardGUI.theme.cardColor()
-                    );
-
-                    // Address text
-                    g2d.setFont(new Font("Arial", Font.BOLD, 24));
-                    FontMetrics metrics = g2d.getFontMetrics();
-                    String tripName = trip.getAddress().toString();
-                    int tripTextX = tripSectionX + ((tripBoxWidth - metrics.stringWidth(tripName)) / 2);
-                    int tripTextY = currentTripY + (singleTripHeight / 2) - 8;
-                    g2d.setColor(dashboardGUI.theme.primaryTextColor());
-                    g2d.drawString(tripName, tripTextX, tripTextY);
-
-                    // Time badge logic
-                    int minsLeft = trip.minutesLeft();
-                    String timeText = minsLeft > 0 ? minsLeft + " min left" : Math.abs(minsLeft) + " min late";
-
-                    g2d.setFont(new Font("Arial", Font.BOLD, 16));
-                    FontMetrics timeMetrics = g2d.getFontMetrics();
-                    int timeTextWidth = timeMetrics.stringWidth(timeText);
-                    int timeTextX = tripSectionX + ((tripBoxWidth - timeTextWidth) / 2);
-                    int timeTextY = currentTripY + (singleTripHeight / 2) + timeMetrics.getHeight();
-
-                    // Dynamic Badge background based on theme
-                    g2d.setColor(minsLeft > 15 ? dashboardGUI.theme.onTimeColor()
-                               : minsLeft > 0  ? dashboardGUI.theme.warningColor()
-                               :                 dashboardGUI.theme.lateColor());
-                    
-                    int badgePadX = 12;
-                    int badgePadY = 4;
-                    g2d.fillRoundRect(
-                        timeTextX - badgePadX,
-                        timeTextY - timeMetrics.getAscent() - badgePadY,
-                        timeTextWidth + (badgePadX * 2),
-                        timeMetrics.getHeight() + (badgePadY * 2),
-                        10, 10
-                    );
-
-                    // Dynamic Badge text based on theme
-                    g2d.setColor(minsLeft > 15 ? dashboardGUI.theme.onTimeTextColor()
-                               : minsLeft > 0  ? dashboardGUI.theme.warningTextColor()
-                               :                 dashboardGUI.theme.lateTextColor());
-                    g2d.drawString(timeText, timeTextX, timeTextY);
-                }
-            } else {
-                g2d.setFont(new Font("Arial", Font.ITALIC, 16));
-                g2d.setColor(dashboardGUI.theme.mutedTextColor());
-                g2d.drawString("No active deliveries", tripSectionX + 20, rowY + 40);
-            }
+            // ---- Draw Trip Section ---- \\
+            drawTripSection(g2d, driver, rowY, driverBoxWidth, tripBoxWidth, rowHeight);
         }
     }
+
+    // ==========================================================
+    // EXTRACTED HELPER METHODS
+    // ==========================================================
+
+    /**
+     * Draws the driver's profile picture and returns the bottom Y coordinate.
+     */
+    private int drawDriverImage(Graphics2D g2d, Driver driver, int rowX, int rowY, int driverBoxWidth, int rowHeight) {
+        Image driverImage = driver.getDriverPicture();
+        if (driverImage == null) {
+            return rowY + (rowHeight / 2) - 15; // Fallback if no image exists
+        }
+
+        int imgWidth = driverImage.getWidth(null);
+        int imgHeight = driverImage.getHeight(null);
+        int imgX = rowX + ((driverBoxWidth - imgWidth) / 2);
+        int imgY = rowY + ((rowHeight - imgHeight) / 2) - 15;
+
+        drawRoundedImage(g2d, driverImage, imgX, imgY, imgWidth, imgHeight, 30);
+        return imgY + imgHeight;
+    }
+
+    /**
+     * Draws the dynamic name badge box with the driver's name, divider, and status dot.
+     */
+    private void drawNameBadge(Graphics2D g2d, Driver driver, int rowX, int baseY, int driverBoxWidth) {
+        Font nameFont = new Font(dashboardGUI.fontName, Font.BOLD, 26);
+        Font statusFont = new Font(dashboardGUI.fontName, Font.PLAIN, 18);
+
+        g2d.setFont(nameFont);
+        FontMetrics nameMetrics = g2d.getFontMetrics();
+        String driverName = driver.getName();
+        int nameWidth = nameMetrics.stringWidth(driverName);
+
+        g2d.setFont(statusFont);
+        FontMetrics statusMetrics = g2d.getFontMetrics();
+        DriverStatus status = driver.getDriverStatus();
+        String statusString = LanguageManager.get(status.name());
+        int statusWidth = statusMetrics.stringWidth(statusString);
+
+        // Elements sizing & padding
+        int padX = 16;       // Left and right padding of the badge
+        int padY = 8;        // Top and bottom padding
+        int divPadX = 10;    // Space around the divider
+        int dotSize = 10;    // Diameter of the status dot
+        int dotPadX = 6;     // Space between dot and status text
+
+        // Calculate total content width and box dimensions
+        int contentWidth = nameWidth + (divPadX * 2) + 1 + dotSize + dotPadX + statusWidth;
+        int maxContentHeight = Math.max(nameMetrics.getHeight(), statusMetrics.getHeight());
+        
+        int boxWidth = contentWidth + (padX * 2);
+        int boxHeight = maxContentHeight + (padY * 2);
+
+        // Position the box perfectly centered below the image
+        int boxX = rowX + ((driverBoxWidth - boxWidth) / 2);
+        int boxY = baseY + 12;
+
+        // 1. Draw the Box Background
+        drawRoundedBox(g2d, boxX, boxY, boxWidth, boxHeight, dashboardGUI.theme.cardColor());
+
+        // Setup coordinates for drawing elements sequentially (Left to Right)
+        int currentX = boxX + padX;
+        int centerY = boxY + (boxHeight / 2);
+
+        // 2. Draw Name
+        g2d.setFont(nameFont);
+        g2d.setColor(dashboardGUI.theme.primaryTextColor());
+        int nameY = boxY + ((boxHeight - nameMetrics.getHeight()) / 2) + nameMetrics.getAscent();
+        g2d.drawString(driverName, currentX, nameY);
+        currentX += nameWidth + divPadX;
+
+        // 3. Draw Divider
+        g2d.setColor(dashboardGUI.theme.subtleBorderColor());
+        int divHeight = maxContentHeight - 2;
+        g2d.drawLine(currentX, centerY - (divHeight / 2), currentX, centerY + (divHeight / 2));
+        currentX += 1 + divPadX;
+
+        // 4. Draw Status Dot
+        switch (status) {
+            case AVAILABLE -> g2d.setColor(dashboardGUI.theme.onTimeTextColor());
+            case ON_TRIP -> g2d.setColor(dashboardGUI.theme.lateTextColor());
+            case COMING_BACK, ON_BREAK -> g2d.setColor(dashboardGUI.theme.warningTextColor());
+            default -> g2d.setColor(dashboardGUI.theme.primaryTextColor());
+        }
+        g2d.fillOval(currentX, centerY - (dotSize / 2), dotSize, dotSize);
+        currentX += dotSize + dotPadX;
+
+        // 5. Draw Status Text
+        g2d.setFont(statusFont);
+        g2d.setColor(dashboardGUI.theme.primaryTextColor());
+        int statusY = boxY + ((boxHeight - statusMetrics.getHeight()) / 2) + statusMetrics.getAscent();
+        g2d.drawString(statusString, currentX, statusY);
+    }
+
+    /**
+     * Draws the trip cards, addresses, and triggers the time badge drawing.
+     */
+    private void drawTripSection(Graphics2D g2d, Driver driver, int rowY, int driverBoxWidth, int tripBoxWidth, int rowHeight) {
+        int tripSectionX = driverBoxWidth;
+        ArrayList<Delivery> driverTrips = driver.getDeliveriesForDriver();
+        
+        if (driverTrips != null && !driverTrips.isEmpty()) {
+            int numTrips = driverTrips.size();
+            int singleTripHeight = rowHeight / numTrips;
+
+            for (int j = 0; j < numTrips; j++) {
+                Delivery trip = driverTrips.get(j);
+                int currentTripY = rowY + (j * singleTripHeight);
+
+                int gapX = 16;
+                int gapY = 10;
+                
+                // Draw the trip card box
+                drawRoundedBox(g2d,
+                    tripSectionX + gapX,
+                    currentTripY + gapY,
+                    tripBoxWidth - (gapX * 2),
+                    singleTripHeight - (gapY * 2),
+                    dashboardGUI.theme.cardColor()
+                );
+
+                // Address text
+                g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 32));
+                FontMetrics metrics = g2d.getFontMetrics();
+                String tripName = trip.getAddress().toString();
+                int tripTextX = tripSectionX + ((tripBoxWidth - metrics.stringWidth(tripName)) / 2);
+                int tripTextY = currentTripY + (singleTripHeight / 2) - 8;
+                g2d.setColor(dashboardGUI.theme.primaryTextColor());
+                g2d.drawString(tripName, tripTextX, tripTextY);
+
+                // Draw Time Badge inside the trip card
+                drawTimeBadge(g2d, trip, tripSectionX, currentTripY, tripBoxWidth, singleTripHeight);
+            }
+        } else {
+            // Draw fallback text when driver has no trips
+            g2d.setFont(new Font(dashboardGUI.fontName, Font.ITALIC, 16));
+            g2d.setColor(dashboardGUI.theme.mutedTextColor());
+            g2d.drawString(LanguageManager.get("no_active_deliveries"), tripSectionX + 20, rowY + 40);
+        }
+    }
+
+    /**
+     * Draws the dynamic time badge (e.g. "15 min left") on the right side of the trip card.
+     */
+    private void drawTimeBadge(Graphics2D g2d, Delivery trip, int tripSectionX, int currentTripY, int tripBoxWidth, int singleTripHeight) {
+        int minsLeft = trip.minutesLeft();
+        String timeText = minsLeft > 0
+            ? minsLeft + " " + LanguageManager.get("min_left")
+            : Math.abs(minsLeft) + " " + LanguageManager.get("min_late");
+
+        g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 30));
+        FontMetrics timeMetrics = g2d.getFontMetrics();
+        int timeTextWidth = timeMetrics.stringWidth(timeText);
+        int timeTextX = tripSectionX + ((tripBoxWidth - timeTextWidth) / 2);
+        int timeTextY = currentTripY + (singleTripHeight / 2) + timeMetrics.getHeight();
+
+        // Dynamic Badge background based on theme
+        g2d.setColor(minsLeft > 15 ? dashboardGUI.theme.onTimeColor()
+                   : minsLeft > 0  ? dashboardGUI.theme.warningColor()
+                   :                 dashboardGUI.theme.lateColor());
+        
+        int badgePadX = 12;
+        int badgePadY = 4;
+        g2d.fillRoundRect(
+            timeTextX - badgePadX,
+            timeTextY - timeMetrics.getAscent() - badgePadY,
+            timeTextWidth + (badgePadX * 2),
+            timeMetrics.getHeight() + (badgePadY * 2),
+            10, 10
+        );
+
+        // Dynamic Badge text based on theme
+        g2d.setColor(minsLeft > 15 ? dashboardGUI.theme.onTimeTextColor()
+                   : minsLeft > 0  ? dashboardGUI.theme.warningTextColor()
+                   :                 dashboardGUI.theme.lateTextColor());
+        g2d.drawString(timeText, timeTextX, timeTextY);
+    }
+
+    // ==========================================================
+    // UTILITY DRAWING METHODS
+    // ==========================================================
 
     private void drawRoundedBox(Graphics2D g2d, int x, int y, int width, int height, Color color) {
         g2d.setColor(color);

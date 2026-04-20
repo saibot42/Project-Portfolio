@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import javax.swing.*;
 import Structures.Delivery;
 import Structures.Delivery.DeliveryStatus;
+import Structures.Delivery.OrderType;
 import Structures.Driver;
 import planners.DeliveryManager;
 import ui.dashboardGUI;
 import ui.Themes.ThemedComponent;
+import utils.LanguageManager;
 
 public class DeliveryListPanel extends JPanel implements ThemedComponent {
     private DeliveryManager deliveryManager;
@@ -38,8 +40,8 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        transitHeader = createSectionHeader("In Transit");
-        pendingHeader = createSectionHeader("Waiting");
+        transitHeader = createSectionHeader(LanguageManager.get("in_transit"));
+        pendingHeader = createSectionHeader(LanguageManager.get("waiting"));
         transitScroll = createScrollPane(inTransitList);
         pendingScroll = createScrollPane(pendingList);
 
@@ -74,6 +76,12 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
         // Update ScrollPanes
         updateScrollStyle(transitScroll);
         updateScrollStyle(pendingScroll);
+
+        //Update Language
+        transitHeader.setText(LanguageManager.get("in_transit").toUpperCase());
+        pendingHeader.setText(LanguageManager.get("waiting").toUpperCase());
+        inTransitList.repaint();
+        pendingList.repaint();
 
         revalidate();
         repaint();
@@ -199,11 +207,11 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
             center.setOpaque(false);
 
             JLabel address = new JLabel(delivery.getAddress().toString());
-            address.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 20));
+            address.setFont(new Font(dashboardGUI.fontName, Font.BOLD,25));
             address.setForeground(dashboardGUI.theme.primaryTextColor());
 
             Driver driver = delivery.getDriver();
-            JLabel driverLabel = new JLabel(driver != null ? driver.getName() : "Unassigned");
+            JLabel driverLabel = new JLabel(driver != null ? driver.getName() : LanguageManager.get("unassigned"));
             driverLabel.setFont(new Font(dashboardGUI.fontName, Font.PLAIN, 15));
             driverLabel.setForeground(dashboardGUI.theme.mutedTextColor());
 
@@ -213,7 +221,15 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
             card.add(center, BorderLayout.CENTER);
 
             // Badge
-            String badgeText = mins > 0 ? mins + " min left" : Math.abs(mins) + " min late";
+            String badgeText = "";
+            if (delivery.getOrderType() == OrderType.PREORDER) {
+                badgeText = LanguageManager.get("preorderFor:") + delivery.getFormattedOrderedTime();
+            } else {
+                badgeText = mins > 0
+                ? mins + " " + LanguageManager.get("min_left")
+                : Math.abs(mins) + " " + LanguageManager.get("min_late");
+            }
+
             JLabel badge = new JLabel(badgeText, SwingConstants.CENTER) {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -225,7 +241,7 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
                     super.paintComponent(g);
                 }
             };
-            badge.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 12));
+            badge.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 20));
             badge.setOpaque(false);
             badge.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
             badge.setBackground(statusBackground(status));

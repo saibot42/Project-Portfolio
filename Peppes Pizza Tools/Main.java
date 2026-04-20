@@ -55,12 +55,12 @@ public class Main {
         LocalDate today = LocalDate.now();
         
         // 2. Combine today's date with the parsed time string for each delivery
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("12:30:00")), customers.get(0)));
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("14:00:00")), customers.get(1)));
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("15:00:00")), customers.get(2)));
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("16:30:00")), customers.get(3)));
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("17:45:00")), customers.get(4)));
-        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("18:15:00")), customers.get(5)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("12:30:00")), null, customers.get(0)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("14:00:00")), null, customers.get(1)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("15:00:00")),null, customers.get(2)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("16:30:00")), null, customers.get(3)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("17:45:00")), null, customers.get(4)));
+        deliveryOverview.addDelivery(new Delivery(LocalDateTime.of(today, LocalTime.parse("12:00")), LocalDateTime.of(today, LocalTime.parse("18:15:00")), customers.get(5)));
 
         return deliveryOverview;
     }
@@ -69,7 +69,7 @@ public class Main {
         DriverOverview driverOverview = new DriverOverview();
         //Add drivers
         driverOverview.addDriver(new Driver("Stian", "assets/stian.jpg"));
-        //driverOverview.addDriver(new Driver("Nocco", new ImageIcon("assets/nicho.jpg").getImage()));
+        //driverOverview.addDriver(new Driver("Nocco", "assets/nicho.jpg"));
         driverOverview.addDriver(new Driver("Jacob", "assets/jacob.jpg"));
         driverOverview.addDriver(new Driver("Regine", "assets/regina.jpg"));
 

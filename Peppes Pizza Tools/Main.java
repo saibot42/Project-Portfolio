@@ -68,10 +68,10 @@ public class Main {
     private static DriverOverview createDrivers(DeliveryOverview deliveries) {
         DriverOverview driverOverview = new DriverOverview();
         //Add drivers
-        driverOverview.addDriver(new Driver("Stian", "assets/stian.jpg"));
-        //driverOverview.addDriver(new Driver("Nocco", "assets/nicho.jpg"));
-        driverOverview.addDriver(new Driver("Jacob", "assets/jacob.jpg"));
-        driverOverview.addDriver(new Driver("Regine", "assets/regina.jpg"));
+        driverOverview.addDriver(new Driver("Stian", "/assets/stian.jpg"));
+        //driverOverview.addDriver(new Driver("Nocco", "/assets/nicho.jpg"));
+        driverOverview.addDriver(new Driver("Jacob", "/assets/jacob.jpg"));
+        driverOverview.addDriver(new Driver("Regine", "/assets/regina.jpg"));
 
         return driverOverview;
     }
@@ -100,8 +100,22 @@ public class Main {
         int screenWidth = screenBounds.width;
         int screenHeight = screenBounds.height;
 
-        // Load the original map image
-        Image mapImage = new ImageIcon("assets/better_map.jpg").getImage();
+
+        //Retrieve mapImage
+        Image mapImage = null;
+        try {
+            java.net.URL mapUrl = Main.class.getResource("/assets/better_map.jpg");
+            if (mapUrl == null) {
+                throw new RuntimeException("Could not find map image! Check folder capitalization.");
+            }
+            mapImage = javax.imageio.ImageIO.read(mapUrl);
+            
+        } catch (java.io.IOException e) {
+            System.err.println("CRITICAL ERROR: Failed to read the map image file!");
+            e.printStackTrace();
+            // Fallback just in case, so the app doesn't completely crash the grid math
+            mapImage = new java.awt.image.BufferedImage(100, 100, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        }
 
         // Resize the map image to fit the panel height, while maintaining the aspect ratio
         double scalingFactor = (double) screenHeight / mapImage.getHeight(null);

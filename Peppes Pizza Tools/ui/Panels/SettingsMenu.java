@@ -24,7 +24,7 @@ public class SettingsMenu extends JDialog implements ThemedComponent {
     private final PropertyChangeListener themeListener;
 
     public SettingsMenu(Window owner) {
-        super(owner, ModalityType.APPLICATION_MODAL);
+        super(owner, ModalityType.DOCUMENT_MODAL);
         setUndecorated(true);
         setSize(500, 400);
         setLocationRelativeTo(owner);

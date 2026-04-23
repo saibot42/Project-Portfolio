@@ -90,13 +90,32 @@ public class Driver {
     }
 
     private Image loadImage(String path) {
-        Image img = new ImageIcon(path).getImage();
-        if (img == null || img.getWidth(null) <= 0) {
-            return new ImageIcon("/assets/default_pf.jpg").getImage();
+        // Ask Java to look inside the JAR file (the "backpack")
+        java.net.URL imgUrl = Driver.class.getResource(path);
+        
+        if (imgUrl != null) {
+            return new ImageIcon(imgUrl).getImage();
+        } else {
+            System.out.println("Could not find image: " + path + " - loading default profile.");
+            
+            // If the specific driver image isn't found, load the fallback.
+            // Remember to use the capital 'A' for Assets!
+            java.net.URL fallbackUrl = Driver.class.getResource("/Assets/default_pf.jpg");
+            
+            if (fallbackUrl != null) {
+                return new ImageIcon(fallbackUrl).getImage();
+            } else {
+                System.out.println("CRITICAL: Could not find the default profile picture either!");
+                // Return a completely blank image to prevent the app from crashing entirely
+                return new java.awt.image.BufferedImage(350, 350, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            }
         }
-        return img;
     }
+
     private void rescaleImage() {
-        pfPicture = pfPicture.getScaledInstance(350, 350, Image.SCALE_DEFAULT);
+        //TODO: Dynamix rescaling based on resoltion and not 
+        pfPicture = pfPicture.getScaledInstance(262, 262, Image.SCALE_DEFAULT); // Suits 1920x1080
+        //pfPicture = pfPicture.getScaledInstance(350, 350, Image.SCALE_DEFAULT); // Suits 2560x1440
+
     }
 }

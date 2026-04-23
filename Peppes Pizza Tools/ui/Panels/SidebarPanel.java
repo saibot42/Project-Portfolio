@@ -11,10 +11,11 @@ public class SidebarPanel extends JPanel implements ThemedComponent {
     private JLabel clockLabel;
     private JLabel dateLabel;
     private JLabel iconLabel;
-    private ImageIcon peppesIcon = new ImageIcon("assets/peppesIcon.png");
+    private ImageIcon peppesIcon = new ImageIcon(SidebarPanel.class.getResource("/assets/peppesIcon.png"));
     private final int sidebarWidth = 100;
 
-    public SidebarPanel(JPanel contentArea) {
+    public SidebarPanel(JPanel contentArea, Rectangle screenBounds) {
+        int strut = screenBounds.height / 80;
         setPreferredSize(new Dimension(sidebarWidth, 0));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -22,7 +23,7 @@ public class SidebarPanel extends JPanel implements ThemedComponent {
         dashboardGUI.addThemeListener(evt -> applyTheme());
 
         drawLogo();
-        add(Box.createVerticalStrut(16));
+        add(Box.createVerticalStrut(strut));
         add(createDivider());
 
         add(Box.createVerticalGlue());
@@ -32,7 +33,7 @@ public class SidebarPanel extends JPanel implements ThemedComponent {
         addSettingsButton();
 
         add(createDivider());
-        add(Box.createVerticalStrut(16));
+        add(Box.createVerticalStrut(strut));
         addClock();
 
         // Initial style application

@@ -97,8 +97,8 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
      * Draws the dynamic name badge box with the driver's name, divider, and status dot.
      */
     private void drawNameBadge(Graphics2D g2d, Driver driver, int rowX, int baseY, int driverBoxWidth) {
-        Font nameFont = new Font(dashboardGUI.fontName, Font.BOLD, 26);
-        Font statusFont = new Font(dashboardGUI.fontName, Font.PLAIN, 18);
+        Font nameFont = new Font(dashboardGUI.fontName, Font.BOLD, 18);
+        Font statusFont = new Font(dashboardGUI.fontName, Font.PLAIN, 12);
 
         g2d.setFont(nameFont);
         FontMetrics nameMetrics = g2d.getFontMetrics();
@@ -194,7 +194,7 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
                 );
 
                 // Address text
-                g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 32));
+                g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 25));
                 FontMetrics metrics = g2d.getFontMetrics();
                 String tripName = trip.getAddress().toString();
                 int tripTextX = tripSectionX + ((tripBoxWidth - metrics.stringWidth(tripName)) / 2);
@@ -222,7 +222,7 @@ public class DriverTripPanel extends JPanel implements ThemedComponent {
             ? minsLeft + " " + LanguageManager.get("min_left")
             : Math.abs(minsLeft) + " " + LanguageManager.get("min_late");
 
-        g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 30));
+        g2d.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 25));
         FontMetrics timeMetrics = g2d.getFontMetrics();
         int timeTextWidth = timeMetrics.stringWidth(timeText);
         int timeTextX = tripSectionX + ((tripBoxWidth - timeTextWidth) / 2);

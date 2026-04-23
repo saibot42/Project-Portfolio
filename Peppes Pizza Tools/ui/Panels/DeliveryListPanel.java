@@ -118,7 +118,7 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
 
     private JLabel createSectionHeader(String text) {
         JLabel label = new JLabel(text.toUpperCase());
-        label.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 25));
+        label.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 20));
         label.setBorder(BorderFactory.createEmptyBorder(16, 0, 8, 0));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
@@ -207,7 +207,7 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
             center.setOpaque(false);
 
             JLabel address = new JLabel(delivery.getAddress().toString());
-            address.setFont(new Font(dashboardGUI.fontName, Font.BOLD,25));
+            address.setFont(new Font(dashboardGUI.fontName, Font.BOLD,20));
             address.setForeground(dashboardGUI.theme.primaryTextColor());
 
             Driver driver = delivery.getDriver();
@@ -241,7 +241,7 @@ public class DeliveryListPanel extends JPanel implements ThemedComponent {
                     super.paintComponent(g);
                 }
             };
-            badge.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 20));
+            badge.setFont(new Font(dashboardGUI.fontName, Font.BOLD, 16));
             badge.setOpaque(false);
             badge.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
             badge.setBackground(statusBackground(status));

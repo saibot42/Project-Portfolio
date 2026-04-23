@@ -5,6 +5,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.RGBImageFilter;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import Structures.Address;
 import Structures.Delivery;
@@ -32,7 +33,12 @@ public class MapPanel extends JPanel implements ThemedComponent {
         
         // Load assets
         this.darkMap = mapManager.getMapImage();
-        this.peppesIcon = new ImageIcon("assets/peppesIcon.png").getImage();
+         // Load the original map image
+        java.net.URL mapUrl = MapPanel.class.getResource("/assets/peppesIcon.png");
+        if (mapUrl == null) {
+            throw new RuntimeException("Could not find  image! Check folder capitalization.");
+        }
+        this.peppesIcon = new ImageIcon(mapUrl).getImage();
 
         // Register for real-time theme updates
         dashboardGUI.addThemeListener(evt -> applyTheme());
@@ -41,6 +47,18 @@ public class MapPanel extends JPanel implements ThemedComponent {
         int w = darkMap.getWidth(null);
         int h = darkMap.getHeight(null);
         setPreferredSize(new Dimension(w, h));
+        // Add this in MapPanel constructor after setPreferredSize:
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                repaint();
+            }
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                repaint();
+            }
+        });
+
 
         // Initial setup
         applyTheme();
@@ -125,15 +143,11 @@ public class MapPanel extends JPanel implements ThemedComponent {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // 1. Draw the active map
         if (currentMap != null) {
             g2d.drawImage(currentMap, 0, 0, getWidth(), getHeight(), null);
         }
 
-        // 2. Draw invisible grid (kept for coordinate logic)
         drawGrid(g2d);
-
-        // 3. Draw Icons and Dots
         highlightDeliveryLocations(g2d);
     }
 
@@ -150,40 +164,52 @@ public class MapPanel extends JPanel implements ThemedComponent {
     }
 
     private void highlightDeliveryLocations(Graphics2D g2d) {
-        int cellWidth = mapManager.getPixelGrid().getCellWidth();
-        int cellHeight = mapManager.getPixelGrid().getCellHeight();
-        
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+
+        // Fall back to map image size if panel hasn't been laid out yet
+        if (panelWidth <= 0) panelWidth = darkMap.getWidth(null);
+        if (panelHeight <= 0) panelHeight = darkMap.getHeight(null);
+        if (panelWidth <= 0 || panelHeight <= 0) return;
+
+        int mapImageWidth = darkMap.getWidth(null);
+        int mapImageHeight = darkMap.getHeight(null);
+        if (mapImageWidth <= 0 || mapImageHeight <= 0) return;
+
+        double scaleX = (double) panelWidth / mapImageWidth;
+        double scaleY = (double) panelHeight / mapImageHeight;
+
+        int cellWidth = (int)(mapManager.getPixelGrid().getCellWidth() * scaleX);
+        int cellHeight = (int)(mapManager.getPixelGrid().getCellHeight() * scaleY);
         if (cellWidth <= 0 || cellHeight <= 0) return;
 
-        // --- RESTAURANT ICON ---
-        int iconSize = cellWidth * 12;
+        // Restaurant icon
+        int iconSize = Math.max(20, cellWidth * 12);
         Pixel peppesPixel = mapManager.ConvertMapToGrid(pAddress.getMapCoordinate());
+        if (peppesPixel == null) return;
 
         int iconX = (peppesPixel.getX() * cellWidth) + (cellWidth / 2) - (iconSize / 2);
         int iconY = (peppesPixel.getY() * cellHeight) + (cellHeight / 2) - (iconSize / 2);
-        g2d.drawImage(peppesIcon, iconX, iconY, iconSize, iconSize, null);
+        if (peppesIcon != null) {
+            g2d.drawImage(peppesIcon, iconX, iconY, iconSize, iconSize, null);
+        }
 
-        // --- DELIVERY DOTS ---
-        int dotSize = cellWidth * 3;
-
+        // Delivery dots
+        int dotSize = Math.max(8, cellWidth * 3);
         for (Delivery delivery : deliveryManager.getPendingDeliveries()) {
             Pixel pixel = mapManager.ConvertMapToGrid(delivery.getAddress().getMapCoordinate());
+            if (pixel == null) continue;
 
             int cx = (pixel.getX() * cellWidth) + (cellWidth / 2);
             int cy = (pixel.getY() * cellHeight) + (cellHeight / 2);
 
-            // Select color based on theme semantic colors
             switch (delivery.getStatus()) {
                 case ON_TIME -> g2d.setColor(dashboardGUI.theme.onTimeTextColor());
                 case WARNING -> g2d.setColor(dashboardGUI.theme.warningTextColor());
                 case LATE    -> g2d.setColor(dashboardGUI.theme.lateTextColor());
                 default      -> g2d.setColor(dashboardGUI.theme.primaryTextColor());
             }
-
-            // Fill dot
             g2d.fillOval(cx - (dotSize / 2), cy - (dotSize / 2), dotSize, dotSize);
-
-            // Subtle border for high visibility on light or dark maps
             g2d.setColor(new Color(0, 0, 0, 100));
             g2d.setStroke(new BasicStroke(1.5f));
             g2d.drawOval(cx - (dotSize / 2), cy - (dotSize / 2), dotSize, dotSize);

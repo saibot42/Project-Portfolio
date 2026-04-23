@@ -36,13 +36,20 @@ public class dashboardGUI extends JPanel {
         contentArea.add(driverTripPanel, "DRIVERS");
         contentArea.add(deliveryListPanel, "DELIVERIES");
 
-        SidebarPanel sidebar = new SidebarPanel(contentArea);
+        SidebarPanel sidebar = new SidebarPanel(contentArea, screenBounds);
 
         add(mapPanel, BorderLayout.WEST);
         add(contentArea, BorderLayout.CENTER);
         add(sidebar, BorderLayout.EAST);
 
         startDynamicUpdates();
+
+        // At the end of the constructor, after all panels are added:
+        SwingUtilities.invokeLater(() -> {
+            SwingUtilities.invokeLater(() -> {
+                mapPanel.repaint();
+            });
+        });
     }
 
     public static void setLanguage(LanguageManager.Language lang) {
